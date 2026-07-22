@@ -1,14 +1,14 @@
 {
   "name": "@contractguard/cli",
   "version": "0.1.0",
-  "description": "CLI for semantic API response and payload diffs",
+  "description": "CLI for ContractGuard — semantic API response and payload diffs",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/api-diff/api-response-and-payload-diff-engine.git",
+    "url": "https://github.com/EvilDiablo/contract-guard.git",
     "directory": "packages/cli"
   },
-  "homepage": "https://github.com/api-diff/api-response-and-payload-diff-engine#readme",
+  "homepage": "https://github.com/EvilDiablo/contract-guard#readme",
   "type": "module",
   "bin": {
     "contractguard": "./dist/index.js"

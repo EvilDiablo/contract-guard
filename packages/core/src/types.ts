@@ -119,7 +119,7 @@ export interface CaptureEndpoint {
   body?: JsonValue;
 }
 
-export interface ApiDiffConfig {
+export interface ContractGuardConfig {
   ignorePaths?: string[];
   side?: Side;
   additiveSeverity?: "info" | "warning";
@@ -127,6 +127,9 @@ export interface ApiDiffConfig {
   endpoints?: CaptureEndpoint[];
   baseUrl?: string;
 }
+
+/** @deprecated Use ContractGuardConfig */
+export type ApiDiffConfig = ContractGuardConfig;
 
 export const DEFAULT_IGNORE_PATHS = [
   "*.created_at",

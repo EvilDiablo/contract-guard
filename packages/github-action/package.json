@@ -2,7 +2,7 @@
   "name": "@contractguard/github-action",
   "version": "0.1.0",
   "private": true,
-  "description": "GitHub Action wrapper for api-diff PR comments",
+  "description": "GitHub Action wrapper for ContractGuard PR comments",
   "type": "module",
   "scripts": {
     "build": "tsup",

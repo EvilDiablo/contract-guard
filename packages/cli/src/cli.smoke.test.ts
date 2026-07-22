@@ -51,7 +51,7 @@ describe("cli smoke", () => {
   });
 
   it("generates TypeScript and Zod schemas", () => {
-    const outDir = mkdtempSync(join(tmpdir(), "api-diff-cli-"));
+    const outDir = mkdtempSync(join(tmpdir(), "contractguard-cli-"));
     try {
       const result = run([
         "generate",

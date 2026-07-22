@@ -3,8 +3,8 @@
 Config file names (first found wins when `--config` is omitted):
 
 1. `contractguard.config.json`
-2. `.apidiffrc`
-3. `.apidiffrc.json`
+2. `.contractguardrc`
+3. `.contractguardrc.json`
 
 Example: [`examples/contractguard.config.json`](../examples/contractguard.config.json) and root [`contractguard.config.json`](../contractguard.config.json).
 
@@ -59,7 +59,7 @@ Patterns match full dotted paths or leaf names (e.g. `*.created_at` matches `cre
       "method": "GET",
       "url": "/v1/users/me",
       "headers": {
-        "Authorization": "Bearer ${API_DIFF_TOKEN}"
+        "Authorization": "Bearer ${CONTRACTGUARD_TOKEN}"
       }
     }
   ]

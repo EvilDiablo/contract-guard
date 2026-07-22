@@ -30351,7 +30351,7 @@ var endpointSchema = external_exports.object({
   headers: external_exports.record(external_exports.string()).optional(),
   body: external_exports.unknown().optional()
 });
-var apiDiffConfigSchema = external_exports.object({
+var contractGuardConfigSchema = external_exports.object({
   ignorePaths: external_exports.array(external_exports.string()).optional(),
   side: external_exports.enum(["response", "request"]).optional(),
   additiveSeverity: external_exports.enum(["info", "warning"]).optional(),
@@ -30360,7 +30360,7 @@ var apiDiffConfigSchema = external_exports.object({
   baseUrl: external_exports.string().optional()
 });
 function parseConfig(raw) {
-  return apiDiffConfigSchema.parse(raw);
+  return contractGuardConfigSchema.parse(raw);
 }
 function loadConfigFromJson(text) {
   const raw = JSON.parse(text);
@@ -30411,7 +30411,7 @@ async function run() {
     const baselinePath = core.getInput("baseline", { required: true });
     const candidatePath = core.getInput("candidate", { required: true });
     const configPath = core.getInput("config");
-    const title = core.getInput("title") || "API Diff Report";
+    const title = core.getInput("title") || "ContractGuard Report";
     const normalizedTitle = title === "API Diff Report" ? "ContractGuard Report" : title;
     const failOn = core.getInput("fail-on") || "breaking";
     const shouldComment = (core.getInput("comment") || "true") === "true";

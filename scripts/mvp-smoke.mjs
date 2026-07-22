@@ -56,7 +56,7 @@ runCli(
 );
 
 console.log("MVP smoke: generate TypeScript + Zod…");
-const outDir = mkdtempSync(join(tmpdir(), "api-diff-mvp-"));
+const outDir = mkdtempSync(join(tmpdir(), "contractguard-mvp-"));
 try {
   runCli(
     [

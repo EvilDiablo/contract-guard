@@ -1,14 +1,14 @@
 {
   "name": "@contractguard/core",
   "version": "0.1.0",
-  "description": "Semantic API response and payload diff engine",
+  "description": "Semantic API contract diff engine for JSON responses and payloads",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/api-diff/api-response-and-payload-diff-engine.git",
+    "url": "https://github.com/EvilDiablo/contract-guard.git",
     "directory": "packages/core"
   },
-  "homepage": "https://github.com/api-diff/api-response-and-payload-diff-engine#readme",
+  "homepage": "https://github.com/EvilDiablo/contract-guard#readme",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -63,8 +63,9 @@ async function run(): Promise<void> {
     const baselinePath = core.getInput("baseline", { required: true });
     const candidatePath = core.getInput("candidate", { required: true });
     const configPath = core.getInput("config");
-    const title = core.getInput("title") || "API Diff Report";
-    const normalizedTitle = title === "API Diff Report" ? "ContractGuard Report" : title;
+    const title = core.getInput("title") || "ContractGuard Report";
+    const normalizedTitle =
+      title === "API Diff Report" ? "ContractGuard Report" : title;
     const failOn = (core.getInput("fail-on") || "breaking") as FailOn;
     const shouldComment = (core.getInput("comment") || "true") === "true";
     const token = core.getInput("github-token") || process.env.GITHUB_TOKEN || "";

@@ -1,5 +1,5 @@
 {
-  "name": "api-response-and-payload-diff-engine",
+  "name": "contract-guard",
   "private": true,
   "packageManager": "pnpm@9.15.0",
   "engines": {

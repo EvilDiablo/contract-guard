@@ -2,6 +2,7 @@ export type {
   ApiDiffConfig,
   ArraySchema,
   CaptureEndpoint,
+  ContractGuardConfig,
   DiffChangeType,
   DiffFinding,
   DiffOptions,
@@ -33,6 +34,7 @@ export { suggestRenames, keySimilarity, tokenizeKey } from "./rename.js";
 export {
   parseConfig,
   loadConfigFromJson,
+  contractGuardConfigSchema,
   apiDiffConfigSchema,
   CONFIG_FILENAMES,
 } from "./config.js";

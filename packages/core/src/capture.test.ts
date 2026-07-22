@@ -24,7 +24,7 @@ describe("captureEndpoints", () => {
     expect(fetchImpl).toHaveBeenCalledOnce();
   });
 
-  it("expands Authorization from API_DIFF_TOKEN-style headers", async () => {
+  it("expands Authorization from CONTRACTGUARD_TOKEN-style headers", async () => {
     process.env.TEST_TOKEN = "secret-token";
     const fetchImpl = vi.fn(async (_url, init) => {
       const headers = new Headers(init?.headers);

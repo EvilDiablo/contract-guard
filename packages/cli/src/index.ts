@@ -12,7 +12,7 @@ import {
   generateSchemas,
   loadConfigFromJson,
   normalizeValue,
-  type ApiDiffConfig,
+  type ContractGuardConfig,
   type FailOn,
   type JsonValue,
 } from "@contractguard/core";
@@ -22,7 +22,7 @@ async function readJsonFile(path: string): Promise<JsonValue> {
   return JSON.parse(text) as JsonValue;
 }
 
-async function tryLoadConfig(explicit?: string): Promise<ApiDiffConfig> {
+async function tryLoadConfig(explicit?: string): Promise<ContractGuardConfig> {
   if (explicit) {
     const text = await readFile(resolve(explicit), "utf8");
     return loadConfigFromJson(text);
@@ -196,9 +196,11 @@ const capture = defineCommand({
       if (idx === -1) continue;
       defaultHeaders[part.slice(0, idx).trim()] = part.slice(idx + 1).trim();
     }
-    if (process.env.API_DIFF_TOKEN) {
+    const token =
+      process.env.CONTRACTGUARD_TOKEN ?? process.env.API_DIFF_TOKEN;
+    if (token) {
       defaultHeaders.Authorization =
-        defaultHeaders.Authorization ?? `Bearer ${process.env.API_DIFF_TOKEN}`;
+        defaultHeaders.Authorization ?? `Bearer ${token}`;
     }
 
     const results = await captureEndpoints(endpoints, {

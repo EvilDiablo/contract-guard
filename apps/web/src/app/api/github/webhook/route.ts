@@ -12,8 +12,7 @@ export const runtime = "nodejs";
 
 /**
  * GitHub App webhook.
- * Expects PR payloads that include optional `api_diff` check-run style inputs,
- * or looks for baseline/candidate JSON URLs in PR body markers:
+ * Expects PR body markers:
  *   <!-- contractguard:baseline=url -->
  *   <!-- contractguard:candidate=url -->
  */

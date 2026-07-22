@@ -57,7 +57,7 @@ jobs:
           fail-on: breaking
 ```
 
-Full example: [`examples/workflows/api-diff.yml`](../examples/workflows/api-diff.yml).
+Full example: [`examples/workflows/contractguard.yml`](../examples/workflows/contractguard.yml).
 
 ## Sticky comments
 

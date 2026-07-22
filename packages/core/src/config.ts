@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { ApiDiffConfig } from "./types.js";
+import type { ContractGuardConfig } from "./types.js";
 
 const endpointSchema = z.object({
   name: z.string().min(1),
@@ -9,7 +9,7 @@ const endpointSchema = z.object({
   body: z.unknown().optional(),
 });
 
-export const apiDiffConfigSchema = z.object({
+export const contractGuardConfigSchema = z.object({
   ignorePaths: z.array(z.string()).optional(),
   side: z.enum(["response", "request"]).optional(),
   additiveSeverity: z.enum(["info", "warning"]).optional(),
@@ -18,11 +18,14 @@ export const apiDiffConfigSchema = z.object({
   baseUrl: z.string().optional(),
 });
 
-export function parseConfig(raw: unknown): ApiDiffConfig {
-  return apiDiffConfigSchema.parse(raw) as ApiDiffConfig;
+/** @deprecated Use contractGuardConfigSchema */
+export const apiDiffConfigSchema = contractGuardConfigSchema;
+
+export function parseConfig(raw: unknown): ContractGuardConfig {
+  return contractGuardConfigSchema.parse(raw) as ContractGuardConfig;
 }
 
-export function loadConfigFromJson(text: string): ApiDiffConfig {
+export function loadConfigFromJson(text: string): ContractGuardConfig {
   const raw = JSON.parse(text) as unknown;
   return parseConfig(raw);
 }
@@ -30,6 +33,6 @@ export function loadConfigFromJson(text: string): ApiDiffConfig {
 /** Default config filename candidates. */
 export const CONFIG_FILENAMES = [
   "contractguard.config.json",
-  ".apidiffrc",
-  ".apidiffrc.json",
+  ".contractguardrc",
+  ".contractguardrc.json",
 ] as const;

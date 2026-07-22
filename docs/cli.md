@@ -49,7 +49,7 @@ pnpm contractguard compare \
 Hit endpoints listed in config and save JSON snapshots.
 
 ```bash
-export API_DIFF_TOKEN=...   # optional Bearer token
+export CONTRACTGUARD_TOKEN=...   # optional Bearer token
 pnpm contractguard capture -C examples/contractguard.config.json -o captures/
 ```
 
@@ -60,7 +60,7 @@ pnpm contractguard capture -C examples/contractguard.config.json -o captures/
 | `--baseUrl` | Override config `baseUrl` |
 | `--header` | Extra `Name:Value` headers (comma-separated) |
 
-Env: `API_DIFF_TOKEN` → `Authorization: Bearer …` when not already set. Header values may use `${ENV_VAR}` expansion.
+Env: `CONTRACTGUARD_TOKEN` (preferred) or legacy `API_DIFF_TOKEN` → `Authorization: Bearer …` when not already set. Header values may use `${ENV_VAR}` expansion.
 
 ### `generate`
 
@@ -83,7 +83,7 @@ pnpm contractguard generate -i snapshot.json -o types/ --name ApiResponse
 If `--config` is omitted, the CLI looks for (in order):
 
 1. `contractguard.config.json`
-2. `.apidiffrc`
-3. `.apidiffrc.json`
+2. `.contractguardrc`
+3. `.contractguardrc.json`
 
 See [Configuration](configuration.md).
