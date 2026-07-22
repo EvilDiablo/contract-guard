@@ -9,9 +9,9 @@ import {
   loadConfigFromJson,
   type FailOn,
   type JsonValue,
-} from "@api-diff/core";
+} from "@contractguard/core";
 
-const MARKER = "<!-- api-diff-report -->";
+const MARKER = "<!-- contractguard-report -->";
 
 async function readJson(path: string): Promise<JsonValue> {
   return JSON.parse(await readFile(path, "utf8")) as JsonValue;
@@ -64,6 +64,7 @@ async function run(): Promise<void> {
     const candidatePath = core.getInput("candidate", { required: true });
     const configPath = core.getInput("config");
     const title = core.getInput("title") || "API Diff Report";
+    const normalizedTitle = title === "API Diff Report" ? "ContractGuard Report" : title;
     const failOn = (core.getInput("fail-on") || "breaking") as FailOn;
     const shouldComment = (core.getInput("comment") || "true") === "true";
     const token = core.getInput("github-token") || process.env.GITHUB_TOKEN || "";
@@ -92,8 +93,8 @@ async function run(): Promise<void> {
       candidateLabel: candidatePath,
     });
 
-    const markdown = formatMarkdownReport(report, title);
-    const reportPath = resolve("api-diff-report.md");
+    const markdown = formatMarkdownReport(report, normalizedTitle);
+    const reportPath = resolve("contractguard-report.md");
     await mkdir(resolve("."), { recursive: true });
     await writeFile(reportPath, markdown, "utf8");
 
@@ -114,10 +115,10 @@ async function run(): Promise<void> {
     const code = exitCodeForReport(report, configFailOn ?? failOn);
     if (code !== 0) {
       core.setFailed(
-        `API diff found issues: ${report.summary.breaking} breaking, ${report.summary.warning} warning`,
+        `ContractGuard found issues: ${report.summary.breaking} breaking, ${report.summary.warning} warning`,
       );
     } else {
-      core.info("API diff clean");
+      core.info("ContractGuard clean");
     }
   } catch (err) {
     core.setFailed(err instanceof Error ? err.message : String(err));

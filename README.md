@@ -1,4 +1,4 @@
-# api-diff — API Response & Payload Diff Engine
+# ContractGuard — API Response & Payload Diff Engine
 
 Catch silent breaking changes in JSON API responses and payloads **before** they hit production.
 
@@ -11,16 +11,16 @@ Requires **Node.js 22+** and [pnpm](https://pnpm.io) 9+ (or use `npx pnpm@9.15.0
 ```bash
 pnpm install
 pnpm build
-pnpm --filter @api-diff/core test
+pnpm --filter @contractguard/core test
 
 # Compare classic breaking fixtures (exit code 2 = breaking)
-pnpm api-diff compare \
+pnpm contractguard compare \
   -b examples/fixtures/baseline-users.json \
   -c examples/fixtures/candidate-users.json \
   -f markdown
 
 # Same compare, do not fail the process
-pnpm api-diff compare \
+pnpm contractguard compare \
   -b examples/fixtures/baseline-users.json \
   -c examples/fixtures/candidate-users.json \
   --failOn never
@@ -29,7 +29,7 @@ pnpm api-diff compare \
 pnpm mvp:smoke
 ```
 
-Equivalent without the `pnpm api-diff` script:
+Equivalent without the `pnpm contractguard` script:
 
 ```bash
 node packages/cli/dist/index.js compare -b examples/fixtures/baseline-users.json -c examples/fixtures/candidate-users.json -f markdown
@@ -51,10 +51,10 @@ Comparing the example fixtures should report breaking changes for:
 
 | Package | Description | MVP |
 | --- | --- | --- |
-| [`@api-diff/core`](packages/core) | SchemaIR normalize, semantic diff, reports, capture, codegen | Yes |
-| [`@api-diff/cli`](packages/cli) | `api-diff compare \| capture \| generate` | Yes |
-| [`@api-diff/github-action`](packages/github-action) | CI Action + sticky PR comments (bundled `dist/` committed) | Yes |
-| [`@api-diff/web`](apps/web) | Hosted dashboard / GitHub App / Stripe scaffold | Experimental |
+| [`@contractguard/core`](packages/core) | SchemaIR normalize, semantic diff, reports, capture, codegen | Yes |
+| [`@contractguard/cli`](packages/cli) | `contractguard compare \| capture \| generate` | Yes |
+| [`@contractguard/github-action`](packages/github-action) | CI Action + sticky PR comments (bundled `dist/` committed) | Yes |
+| [`@contractguard/web`](apps/web) | Hosted dashboard / GitHub App / Stripe scaffold | Experimental |
 
 ## Documentation
 
@@ -64,7 +64,7 @@ Comparing the example fixtures should report breaking changes for:
 | [CLI reference](docs/cli.md) | Commands, exit codes, outputs |
 | [GitHub Action](docs/github-action.md) | Inputs, sticky comments, example workflow |
 | [How it works](docs/how-it-works.md) | Normalize → SchemaIR → semantic diff |
-| [Configuration](docs/configuration.md) | `api-diff.config.json` and ignore paths |
+| [Configuration](docs/configuration.md) | `contractguard.config.json` and ignore paths |
 | [MVP checklist](docs/mvp-checklist.md) | Acceptance commands |
 | [Roadmap](docs/roadmap.md) | Deferred next steps (OpenAPI, publish, SaaS) |
 | [Contributing](CONTRIBUTING.md) | Monorepo layout, build, test |

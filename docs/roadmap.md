@@ -15,9 +15,9 @@ See [MVP checklist](mvp-checklist.md).
 Ordered by distribution leverage:
 
 1. **OpenAPI support** — compare OpenAPI YAML/JSON for a path/operation; CLI flags for baseline/candidate specs.
-2. **npm publish** — dry-run then publish `@api-diff/core` + `@api-diff/cli` (`0.1.0`), `CHANGELOG.md`, workspace protocol rewrite.
+2. **npm publish** — dry-run then publish `@contractguard/core` + `@contractguard/cli` (`0.1.0`), `CHANGELOG.md`, workspace protocol rewrite.
 3. **Action distribution** — release workflow that rebuilds and refreshes committed Action `dist/` on tag; Marketplace listing.
-4. **Capture in CI** — example workflow hitting staging via `examples/api-diff.config.json`.
+4. **Capture in CI** — example workflow hitting staging via `examples/contractguard.config.json`.
 5. **Production SaaS** (`apps/web`) — auth, Drizzle migrations, real run history, Slack/Teams alerts, Stripe org onboarding. Treat current web app as scaffold only.
 
 ## Explicitly out of near-term scope

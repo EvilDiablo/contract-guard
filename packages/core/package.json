@@ -1,5 +1,5 @@
 {
-  "name": "@api-diff/core",
+  "name": "@contractguard/core",
   "version": "0.1.0",
   "description": "Semantic API response and payload diff engine",
   "license": "MIT",

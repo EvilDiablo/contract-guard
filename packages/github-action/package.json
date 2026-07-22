@@ -1,5 +1,5 @@
 {
-  "name": "@api-diff/github-action",
+  "name": "@contractguard/github-action",
   "version": "0.1.0",
   "private": true,
   "description": "GitHub Action wrapper for api-diff PR comments",
@@ -13,7 +13,7 @@
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.0",
-    "@api-diff/core": "workspace:*"
+    "@contractguard/core": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

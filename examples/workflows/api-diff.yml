@@ -1,4 +1,4 @@
-name: API Diff
+name: ContractGuard
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
       - "packages/**"
 
 jobs:
-  api-diff:
+  contractguard:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -15,21 +15,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # version comes from package.json "packageManager" (pnpm@9.15.0)
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: pnpm
 
-      - name: Run API Diff Action
+      - name: Run ContractGuard Action
         uses: ./packages/github-action
         with:
           baseline: examples/fixtures/baseline-users.json
           candidate: examples/fixtures/candidate-users.json
-          config: examples/api-diff.config.json
+          config: examples/contractguard.config.json
           title: "Breaking API Changes Detected in /v1/users"
           fail-on: never
           comment: "true"

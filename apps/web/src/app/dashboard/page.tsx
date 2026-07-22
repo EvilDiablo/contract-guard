@@ -1,4 +1,4 @@
-import { compareJson, formatMarkdownReport } from "@api-diff/core";
+import { compareJson, formatMarkdownReport } from "@contractguard/core";
 
 const demoBaseline = {
   id: 101,

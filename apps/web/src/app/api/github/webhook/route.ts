@@ -4,7 +4,7 @@ import {
   compareJson,
   formatMarkdownReport,
   type JsonValue,
-} from "@api-diff/core";
+} from "@contractguard/core";
 import { upsertPrComment } from "@/lib/github";
 import { getDb, schema } from "@/db/client";
 
@@ -14,8 +14,8 @@ export const runtime = "nodejs";
  * GitHub App webhook.
  * Expects PR payloads that include optional `api_diff` check-run style inputs,
  * or looks for baseline/candidate JSON URLs in PR body markers:
- *   <!-- api-diff:baseline=url -->
- *   <!-- api-diff:candidate=url -->
+ *   <!-- contractguard:baseline=url -->
+ *   <!-- contractguard:candidate=url -->
  */
 export async function POST(request: Request) {
   const secret = process.env.GITHUB_WEBHOOK_SECRET;
@@ -70,13 +70,13 @@ export async function POST(request: Request) {
     (body.action === "opened" || body.action === "synchronize" || body.action === "reopened")
   ) {
     const prBody = body.pull_request.body ?? "";
-    const baselineUrl = prBody.match(/<!--\s*api-diff:baseline=(.+?)\s*-->/)?.[1];
-    const candidateUrl = prBody.match(/<!--\s*api-diff:candidate=(.+?)\s*-->/)?.[1];
+    const baselineUrl = prBody.match(/<!--\s*contractguard:baseline=(.+?)\s*-->/)?.[1];
+    const candidateUrl = prBody.match(/<!--\s*contractguard:candidate=(.+?)\s*-->/)?.[1];
 
     if (!baselineUrl || !candidateUrl) {
       return NextResponse.json({
         ok: true,
-        skipped: "No api-diff baseline/candidate markers in PR body",
+        skipped: "No contractguard baseline/candidate markers in PR body",
       });
     }
 
@@ -93,7 +93,7 @@ export async function POST(request: Request) {
     });
     const markdown = formatMarkdownReport(
       report,
-      `API Diff Report — ${body.repository.full_name}#${body.pull_request.number}`,
+      `ContractGuard Report — ${body.repository.full_name}#${body.pull_request.number}`,
     );
 
     await upsertPrComment({

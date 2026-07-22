@@ -40,7 +40,7 @@ export async function upsertPrComment(options: {
   body: string;
   marker?: string;
 }): Promise<void> {
-  const marker = options.marker ?? "<!-- api-diff-report -->";
+  const marker = options.marker ?? "<!-- contractguard-report -->";
   const octokit = getInstallationOctokit(options.installationId);
   const { data: comments } = await octokit.issues.listComments({
     owner: options.owner,

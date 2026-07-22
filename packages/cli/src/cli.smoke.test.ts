@@ -33,7 +33,7 @@ describe("cli smoke", () => {
       "markdown",
     ]);
     expect(result.status).toBe(2);
-    expect(result.stdout).toContain("<!-- api-diff-report -->");
+    expect(result.stdout).toContain("<!-- contractguard-report -->");
     expect(result.stdout + result.stderr).toContain("BREAKING");
   });
 

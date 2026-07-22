@@ -1,6 +1,6 @@
 # How it works
 
-api-diff compares **structure**, not raw text. Key order and formatting never matter. Dynamic values (timestamps) are ignored by default.
+ContractGuard compares **structure**, not raw text. Key order and formatting never matter. Dynamic values (timestamps) are ignored by default.
 
 ```text
 JSON baseline ──┐
@@ -53,7 +53,7 @@ Rename detection uses token + Levenshtein similarity on sibling keys ([`packages
 High-level API used by CLI / Action / web:
 
 ```ts
-import { compareJson, formatMarkdownReport, exitCodeForReport } from "@api-diff/core";
+import { compareJson, formatMarkdownReport, exitCodeForReport } from "@contractguard/core";
 
 const report = compareJson(baseline, candidate);
 const md = formatMarkdownReport(report);
@@ -68,4 +68,4 @@ const code = exitCodeForReport(report, "breaking"); // 0 | 1 | 2
 | GitHub Action | Same compare; sticky PR comment |
 | `apps/web` | Experimental hosted API + dashboard (not MVP) |
 
-All surfaces share `@api-diff/core` — one meaning of “breaking.”
+All surfaces share `@contractguard/core` — one meaning of “breaking.”

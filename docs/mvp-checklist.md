@@ -12,25 +12,25 @@ pnpm install
 pnpm build
 
 # 3. Unit tests
-pnpm --filter @api-diff/core test
+pnpm --filter @contractguard/core test
 # Expect: 13+ tests passed
 
 # 4. Breaking compare → exit 2
-pnpm api-diff compare \
+pnpm contractguard compare \
   -b examples/fixtures/baseline-users.json \
   -c examples/fixtures/candidate-users.json \
   -f markdown
-# Expect: Markdown with BREAKING + <!-- api-diff-report -->, exit 2
+# Expect: Markdown with BREAKING + <!-- contractguard-report -->, exit 2
 
 # 5. failOn never → exit 0
-pnpm api-diff compare \
+pnpm contractguard compare \
   -b examples/fixtures/baseline-users.json \
   -c examples/fixtures/candidate-users.json \
   --failOn never
 # Expect: exit 0
 
 # 6. Codegen
-pnpm api-diff generate \
+pnpm contractguard generate \
   -i examples/fixtures/candidate-users.json \
   -o .tmp/types \
   --name UserResponse

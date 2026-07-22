@@ -29,7 +29,7 @@ export function loadConfigFromJson(text: string): ApiDiffConfig {
 
 /** Default config filename candidates. */
 export const CONFIG_FILENAMES = [
-  "api-diff.config.json",
+  "contractguard.config.json",
   ".apidiffrc",
   ".apidiffrc.json",
 ] as const;

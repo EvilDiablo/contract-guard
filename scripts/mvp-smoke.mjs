@@ -42,8 +42,8 @@ const breaking = runCli(
   { expectExit: 2 },
 );
 const md = breaking.stdout + breaking.stderr;
-if (!md.includes("<!-- api-diff-report -->")) {
-  fail("markdown report missing sticky marker <!-- api-diff-report -->");
+if (!md.includes("<!-- contractguard-report -->")) {
+  fail("markdown report missing sticky marker <!-- contractguard-report -->");
 }
 if (!md.includes("BREAKING")) {
   fail("markdown report missing BREAKING findings");

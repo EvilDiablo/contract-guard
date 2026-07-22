@@ -1,5 +1,5 @@
 {
-  "name": "@api-diff/web",
+  "name": "@contractguard/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -13,7 +13,7 @@
     "db:push": "drizzle-kit push"
   },
   "dependencies": {
-    "@api-diff/core": "workspace:*",
+    "@contractguard/core": "workspace:*",
     "@octokit/auth-app": "^7.1.4",
     "@octokit/rest": "^21.0.2",
     "@octokit/webhooks": "^13.4.1",

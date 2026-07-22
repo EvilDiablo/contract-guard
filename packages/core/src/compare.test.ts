@@ -79,7 +79,7 @@ describe("compareJson", () => {
   it("renders markdown with sticky marker", () => {
     const report = compareJson({ id: 1 }, { id: "1" });
     const md = formatMarkdownReport(report, "Breaking API Changes");
-    expect(md).toContain("<!-- api-diff-report -->");
+    expect(md).toContain("<!-- contractguard-report -->");
     expect(md).toContain("BREAKING");
   });
 });

@@ -15,7 +15,7 @@ import {
   type ApiDiffConfig,
   type FailOn,
   type JsonValue,
-} from "@api-diff/core";
+} from "@contractguard/core";
 
 async function readJsonFile(path: string): Promise<JsonValue> {
   const text = await readFile(path, "utf8");
@@ -66,7 +66,7 @@ const compare = defineCommand({
     },
     config: {
       type: "string",
-      description: "Path to api-diff config JSON",
+      description: "Path to contractguard config JSON",
       alias: "C",
     },
     format: {
@@ -95,7 +95,7 @@ const compare = defineCommand({
     title: {
       type: "string",
       description: "Markdown report title",
-      default: "API Diff Report",
+      default: "ContractGuard Report",
     },
     codegen: {
       type: "string",
@@ -163,7 +163,7 @@ const capture = defineCommand({
   args: {
     config: {
       type: "string",
-      description: "Path to api-diff config with endpoints",
+      description: "Path to contractguard config with endpoints",
       alias: "C",
     },
     out: {
@@ -185,7 +185,7 @@ const capture = defineCommand({
     const config = await tryLoadConfig(args.config);
     const endpoints = config.endpoints ?? [];
     if (endpoints.length === 0) {
-      consola.error("No endpoints configured. Add `endpoints` to api-diff.config.json");
+      consola.error("No endpoints configured. Add `endpoints` to contractguard.config.json");
       process.exitCode = 1;
       return;
     }
@@ -279,7 +279,7 @@ const generate = defineCommand({
 
 const main = defineCommand({
   meta: {
-    name: "api-diff",
+    name: "contractguard",
     version: "0.1.0",
     description: "Semantic API response & payload diff engine",
   },

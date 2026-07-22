@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "api-diff — catch breaking API changes before production",
+  title: "ContractGuard — catch breaking API changes before production",
   description:
     "Semantic JSON/API payload diff engine for GitHub PRs, CLI, and staging captures.",
 };
@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main>
           <nav className="nav">
             <a className="brand" href="/">
-              api-diff
+              contractguard
             </a>
             <div className="nav-links">
               <a href="/pricing">Pricing</a>

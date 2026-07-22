@@ -42,7 +42,7 @@ export default function HomePage() {
       </section>
 
       <section style={{ marginTop: "3rem" }}>
-        <p className="muted mono">npx api-diff compare -b main.json -c pr.json -f markdown</p>
+        <p className="muted mono">npx contractguard compare -b main.json -c pr.json -f markdown</p>
       </section>
     </>
   );

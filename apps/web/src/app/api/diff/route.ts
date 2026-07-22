@@ -5,7 +5,7 @@ import {
   generateSchemas,
   normalizeValue,
   type JsonValue,
-} from "@api-diff/core";
+} from "@contractguard/core";
 
 export const runtime = "nodejs";
 
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 
     const markdown = formatMarkdownReport(
       report,
-      body.title ?? "API Diff Report",
+      body.title ?? "ContractGuard Report",
     );
 
     let codegen: { typescript: string; zod: string } | undefined;

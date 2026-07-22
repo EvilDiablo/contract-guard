@@ -1,15 +1,15 @@
 # CLI reference
 
-Binary: `api-diff` (package `@api-diff/cli`).
+Binary: `contractguard` (package `@contractguard/cli`).
 
 After `pnpm install` + `pnpm build` at the repo root:
 
 ```bash
-pnpm api-diff <command> ...
+pnpm contractguard <command> ...
 # or
 node packages/cli/dist/index.js <command> ...
 # or (when the workspace bin is linked)
-npx api-diff <command> ...
+npx contractguard <command> ...
 ```
 
 ## Commands
@@ -19,7 +19,7 @@ npx api-diff <command> ...
 Semantically compare two JSON snapshot files.
 
 ```bash
-pnpm api-diff compare \
+pnpm contractguard compare \
   -b path/to/baseline.json \
   -c path/to/candidate.json \
   -f markdown \
@@ -27,7 +27,7 @@ pnpm api-diff compare \
   --failOn breaking \
   --ignore "*.trace_id" \
   --side response \
-  --title "API Diff Report" \
+  --title "ContractGuard Report" \
   --codegen types/
 ```
 
@@ -35,7 +35,7 @@ pnpm api-diff compare \
 | --- | --- |
 | `-b, --baseline` | Baseline JSON path (required) |
 | `-c, --candidate` | Candidate JSON path (required) |
-| `-C, --config` | Path to `api-diff.config.json` |
+| `-C, --config` | Path to `contractguard.config.json` |
 | `-f, --format` | `text` (default), `markdown` / `md`, or `json` |
 | `-o, --out` | Write report to a file |
 | `--failOn` | `breaking` (default), `warning`, or `never` |
@@ -50,7 +50,7 @@ Hit endpoints listed in config and save JSON snapshots.
 
 ```bash
 export API_DIFF_TOKEN=...   # optional Bearer token
-pnpm api-diff capture -C examples/api-diff.config.json -o captures/
+pnpm contractguard capture -C examples/contractguard.config.json -o captures/
 ```
 
 | Flag | Description |
@@ -67,7 +67,7 @@ Env: `API_DIFF_TOKEN` → `Authorization: Bearer …` when not already set. Head
 Emit TypeScript + Zod from a JSON snapshot.
 
 ```bash
-pnpm api-diff generate -i snapshot.json -o types/ --name ApiResponse
+pnpm contractguard generate -i snapshot.json -o types/ --name ApiResponse
 ```
 
 ## Exit codes
@@ -82,7 +82,7 @@ pnpm api-diff generate -i snapshot.json -o types/ --name ApiResponse
 
 If `--config` is omitted, the CLI looks for (in order):
 
-1. `api-diff.config.json`
+1. `contractguard.config.json`
 2. `.apidiffrc`
 3. `.apidiffrc.json`
 

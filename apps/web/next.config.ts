@@ -5,7 +5,7 @@ import type { NextConfig } from "next";
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@api-diff/core"],
+  transpilePackages: ["@contractguard/core"],
   outputFileTracingRoot: root,
 };
 

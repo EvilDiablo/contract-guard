@@ -1,6 +1,6 @@
-name: "API Diff"
+name: "ContractGuard"
 description: "Semantic API response & payload diff with sticky PR comments"
-author: "api-diff"
+author: "contractguard"
 branding:
   icon: "git-pull-request"
   color: "orange"
@@ -12,12 +12,12 @@ inputs:
     description: "Path to candidate JSON snapshot"
     required: true
   config:
-    description: "Path to api-diff.config.json"
+    description: "Path to contractguard.config.json"
     required: false
   title:
     description: "PR comment title"
     required: false
-    default: "API Diff Report"
+    default: "ContractGuard Report"
   fail-on:
     description: "breaking | warning | never"
     required: false

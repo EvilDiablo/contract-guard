@@ -15,7 +15,7 @@
       "method": "POST",
       "url": "/anything",
       "headers": {
-        "X-Api-Diff": "1"
+        "X-ContractGuard": "1"
       },
       "body": {
         "probe": true

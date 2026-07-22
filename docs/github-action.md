@@ -2,7 +2,7 @@
 
 Path: [`packages/github-action`](../packages/github-action)
 
-The Action runs a semantic compare, writes `api-diff-report.md`, adds a job summary, and (on pull requests) creates or updates a **sticky** comment identified by `<!-- api-diff-report -->`.
+The Action runs a semantic compare, writes `contractguard-report.md`, adds a job summary, and (on pull requests) creates or updates a **sticky** comment identified by `<!-- contractguard-report -->`.
 
 The bundled runtime (`dist/main.js`) is **committed** so workflows can use the Action without a build step.
 
@@ -22,8 +22,8 @@ GitHub Actions JavaScript runtimes support `node20` and `node24` only (not `node
 | --- | --- | --- | --- |
 | `baseline` | yes | — | Path to baseline JSON |
 | `candidate` | yes | — | Path to candidate JSON |
-| `config` | no | — | Path to `api-diff.config.json` |
-| `title` | no | `API Diff Report` | PR comment / report title |
+| `config` | no | — | Path to `contractguard.config.json` |
+| `title` | no | `ContractGuard Report` | PR comment / report title |
 | `fail-on` | no | `breaking` | `breaking` \| `warning` \| `never` |
 | `comment` | no | `true` | Post sticky PR comment |
 | `github-token` | no | `${{ github.token }}` | Token for comments |
@@ -39,10 +39,10 @@ GitHub Actions JavaScript runtimes support `node20` and `node24` only (not `node
 ## Minimal workflow
 
 ```yaml
-name: API Diff
+name: ContractGuard
 on: pull_request
 jobs:
-  api-diff:
+  contractguard:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -64,7 +64,7 @@ Full example: [`examples/workflows/api-diff.yml`](../examples/workflows/api-diff
 The Markdown reporter always includes:
 
 ```html
-<!-- api-diff-report -->
+<!-- contractguard-report -->
 ```
 
 On subsequent PR pushes the Action updates the existing comment instead of creating duplicates.
@@ -74,8 +74,8 @@ On subsequent PR pushes the Action updates the existing comment instead of creat
 After changing Action or core source:
 
 ```bash
-pnpm --filter @api-diff/core build
-pnpm --filter @api-diff/github-action build
+pnpm --filter @contractguard/core build
+pnpm --filter @contractguard/github-action build
 ```
 
 Commit the updated `packages/github-action/dist/` artifacts when shipping Action changes.

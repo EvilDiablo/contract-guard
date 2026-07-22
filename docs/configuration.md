@@ -2,11 +2,11 @@
 
 Config file names (first found wins when `--config` is omitted):
 
-1. `api-diff.config.json`
+1. `contractguard.config.json`
 2. `.apidiffrc`
 3. `.apidiffrc.json`
 
-Example: [`examples/api-diff.config.json`](../examples/api-diff.config.json) and root [`api-diff.config.json`](../api-diff.config.json).
+Example: [`examples/contractguard.config.json`](../examples/contractguard.config.json) and root [`contractguard.config.json`](../contractguard.config.json).
 
 ## Schema
 
