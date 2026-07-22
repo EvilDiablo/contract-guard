@@ -13,3 +13,5 @@ coverage
 captures
 .tmp
 .vercel
+# Private notes (pricing, business strategy) — never commit
+local/

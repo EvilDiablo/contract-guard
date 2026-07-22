@@ -22,12 +22,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main>
           <nav className="nav">
             <a className="brand" href="/">
-              contractguard
+              ContractGuard
             </a>
             <div className="nav-links">
-              <a href="/pricing">Pricing</a>
               <a href="/dashboard">Dashboard</a>
-              <a href="https://github.com" rel="noreferrer">
+              <a href="https://github.com/EvilDiablo/contract-guard" rel="noreferrer">
                 GitHub
               </a>
             </div>

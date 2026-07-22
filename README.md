@@ -1,81 +1,95 @@
-# ContractGuard — API Response & Payload Diff Engine
+# ContractGuard — catch breaking API changes before production
 
-Catch silent breaking changes in JSON API responses and payloads **before** they hit production.
+Semantic diffs for JSON API responses and payloads: type changes, removed keys, renames (`user_id` → `userId`), nullability shifts — reported in your terminal or as sticky GitHub PR comments.
 
-Semantic comparison (not text diff): type changes, removed keys, renames (`user_id` → `userId`), nullability shifts — with sticky GitHub PR comments.
+## Install (recommended)
 
-## 60-second quick start
-
-Requires **Node.js 22+** and [pnpm](https://pnpm.io) 9+ (or use `npx pnpm@9.15.0`).
+Requires **Node.js 22+**.
 
 ```bash
-pnpm install
-pnpm build
-pnpm --filter @contractguard/core test
+# One-off
+npx @contractguard/cli compare -b baseline.json -c candidate.json -f markdown
 
-# Compare classic breaking fixtures (exit code 2 = breaking)
+# Or add as a dev dependency
+npm install -D @contractguard/cli
+npx contractguard compare -b baseline.json -c candidate.json -f markdown
+```
+
+Library use:
+
+```bash
+npm install @contractguard/core
+```
+
+Full install guide: [docs/install.md](docs/install.md).
+
+## GitHub Action (other repos)
+
+```yaml
+name: ContractGuard
+on: pull_request
+jobs:
+  contractguard:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: EvilDiablo/contract-guard/packages/github-action@v0.1.0
+        with:
+          baseline: path/to/baseline.json
+          candidate: path/to/candidate.json
+          title: "API contract changes"
+          fail-on: breaking
+```
+
+Details: [docs/github-action.md](docs/github-action.md).
+
+## Try the demo fixtures (this repo)
+
+```bash
+git clone https://github.com/EvilDiablo/contract-guard.git
+cd contract-guard
+pnpm install && pnpm build
 pnpm contractguard compare \
   -b examples/fixtures/baseline-users.json \
   -c examples/fixtures/candidate-users.json \
   -f markdown
-
-# Same compare, do not fail the process
-pnpm contractguard compare \
-  -b examples/fixtures/baseline-users.json \
-  -c examples/fixtures/candidate-users.json \
-  --failOn never
-
-# Full MVP smoke suite
-pnpm mvp:smoke
 ```
 
-Equivalent without the `pnpm contractguard` script:
+Expected breaking findings: `id` / `price` type changes, `user_id`→`userId` rename, `address`→`null`, `email` removed.
 
-```bash
-node packages/cli/dist/index.js compare -b examples/fixtures/baseline-users.json -c examples/fixtures/candidate-users.json -f markdown
-```
-
-### Expected demo findings
-
-Comparing the example fixtures should report breaking changes for:
-
-- `id`: `number` → `string`
-- `price`: `number` → `string`
-- `user_id` → possible rename to `userId`
-- `address`: object → `null`
-- `email`: field removed
-
-…and an informational finding for the additive `new_field`.
-
-## Packages
-
-| Package | Description | MVP |
-| --- | --- | --- |
-| [`@contractguard/core`](packages/core) | SchemaIR normalize, semantic diff, reports, capture, codegen | Yes |
-| [`@contractguard/cli`](packages/cli) | `contractguard compare \| capture \| generate` | Yes |
-| [`@contractguard/github-action`](packages/github-action) | CI Action + sticky PR comments (bundled `dist/` committed) | Yes |
-| [`@contractguard/web`](apps/web) | Hosted dashboard / GitHub App / Stripe scaffold | Experimental |
-
-## Documentation
-
-| Doc | Topic |
-| --- | --- |
-| [Getting started](docs/getting-started.md) | Install, build, first compare |
-| [CLI reference](docs/cli.md) | Commands, exit codes, outputs |
-| [GitHub Action](docs/github-action.md) | Inputs, sticky comments, example workflow |
-| [How it works](docs/how-it-works.md) | Normalize → SchemaIR → semantic diff |
-| [Configuration](docs/configuration.md) | `contractguard.config.json` and ignore paths |
-| [MVP checklist](docs/mvp-checklist.md) | Acceptance commands |
-| [Roadmap](docs/roadmap.md) | Deferred next steps (OpenAPI, publish, SaaS) |
-| [Contributing](CONTRIBUTING.md) | Monorepo layout, build, test |
-
-## Exit codes
+### Exit codes
 
 | Code | Meaning |
 | --- | --- |
 | `0` | Clean, or `failOn: never` |
 | `1` | Warnings only when `failOn: warning` |
 | `2` | Breaking changes |
+
+## Packages
+
+| Package | Description |
+| --- | --- |
+| [`@contractguard/core`](packages/core) | Diff engine, reports, capture, codegen |
+| [`@contractguard/cli`](packages/cli) | `contractguard` CLI |
+| [`packages/github-action`](packages/github-action) | GitHub Action (use from GitHub, not npm) |
+| [`apps/web`](apps/web) | Experimental hosted UI scaffold |
+
+## Documentation
+
+| Doc | Topic |
+| --- | --- |
+| [Install](docs/install.md) | npm + Action for your team |
+| [Getting started](docs/getting-started.md) | First compare |
+| [CLI](docs/cli.md) | Commands and flags |
+| [GitHub Action](docs/github-action.md) | Inputs and sticky comments |
+| [How it works](docs/how-it-works.md) | Semantic diff model |
+| [Configuration](docs/configuration.md) | Config file |
+| [Roadmap](docs/roadmap.md) | Public product plans |
+| [Changelog](CHANGELOG.md) | Releases |
+| [Contributing](CONTRIBUTING.md) | Developing this repo |
 
 ## License
 

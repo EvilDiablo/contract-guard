@@ -8,10 +8,11 @@ Thanks for helping improve ContractGuard.
 packages/core           # SchemaIR, diff, report, capture, codegen
 packages/cli            # contractguard CLI
 packages/github-action  # GitHub Action (commit dist/ after Action/core changes)
-apps/web                # Experimental SaaS scaffold (not MVP)
+apps/web                # Experimental hosted UI scaffold
 examples/               # Fixtures, sample config, sample workflow
-docs/                   # User documentation
+docs/                   # Public user documentation
 scripts/mvp-smoke.mjs   # MVP acceptance smoke suite
+local/                  # Gitignored — private notes only (never commit)
 ```
 
 ## Tooling
@@ -40,13 +41,23 @@ pnpm mvp:smoke
 
   Commit `packages/github-action/dist/` — it is not ignored (see `.gitignore` exceptions).
 
-- Keep `apps/web` changes isolated unless you are intentionally working on the deferred SaaS roadmap.
+- Keep `apps/web` changes isolated unless you are intentionally working on the experimental UI.
+- Do **not** commit business/pricing notes. Use gitignored `local/` (or notes outside the clone).
+
+## Publishing (maintainers)
+
+See [docs/install.md](docs/install.md#maintainer-publish-to-npm) and [CHANGELOG.md](CHANGELOG.md).
+
+```bash
+pnpm publish:dry
+pnpm publish:packages   # requires npm login + @contractguard scope
+```
 
 ## Pull requests
 
 1. Keep the [MVP checklist](docs/mvp-checklist.md) green.
 2. Update docs when you change CLI flags, Action inputs, or severity rules.
-3. Do not start OpenAPI / npm publish / production SaaS work in the same PR as unrelated MVP fixes — see [roadmap](docs/roadmap.md).
+3. Keep the [public roadmap](docs/roadmap.md) free of monetization/pricing language.
 
 ## License
 

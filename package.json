@@ -12,7 +12,9 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "contractguard": "node packages/cli/dist/index.js",
-    "mvp:smoke": "node scripts/mvp-smoke.mjs"
+    "mvp:smoke": "node scripts/mvp-smoke.mjs",
+    "publish:dry": "pnpm build && pnpm --filter @contractguard/core publish --dry-run --access public --no-git-checks && pnpm --filter @contractguard/cli publish --dry-run --access public --no-git-checks",
+    "publish:packages": "pnpm build && pnpm --filter @contractguard/core publish --access public && pnpm --filter @contractguard/cli publish --access public"
   },
   "dependencies": {
     "@contractguard/cli": "workspace:*"

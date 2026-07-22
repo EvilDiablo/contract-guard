@@ -2,14 +2,25 @@
 
 Binary: `contractguard` (package `@contractguard/cli`).
 
-After `pnpm install` + `pnpm build` at the repo root:
+## Install
+
+```bash
+npm install -D @contractguard/cli
+npx contractguard <command> ...
+```
+
+Or without installing:
+
+```bash
+npx @contractguard/cli <command> ...
+```
+
+When developing **this** monorepo after `pnpm build`:
 
 ```bash
 pnpm contractguard <command> ...
 # or
 node packages/cli/dist/index.js <command> ...
-# or (when the workspace bin is linked)
-npx contractguard <command> ...
 ```
 
 ## Commands

@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm mvp:smoke
+      - name: Ensure Action bundle exists
+        run: test -f packages/github-action/dist/main.js
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          body: |
+            ## Install
+
+            ```bash
+            npx @contractguard/cli compare -b baseline.json -c candidate.json -f markdown
+            ```
+
+            ## GitHub Action
+
+            ```yaml
+            - uses: EvilDiablo/contract-guard/packages/github-action@${{ github.ref_name }}
+              with:
+                baseline: path/to/baseline.json
+                candidate: path/to/candidate.json
+            ```
+
+            See [CHANGELOG.md](https://github.com/EvilDiablo/contract-guard/blob/main/CHANGELOG.md) and [docs/install.md](https://github.com/EvilDiablo/contract-guard/blob/main/docs/install.md).

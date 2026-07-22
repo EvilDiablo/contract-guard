@@ -6,6 +6,18 @@ The Action runs a semantic compare, writes `contractguard-report.md`, adds a job
 
 The bundled runtime (`dist/main.js`) is **committed** so workflows can use the Action without a build step.
 
+## Use from another repository
+
+```yaml
+- uses: EvilDiablo/contract-guard/packages/github-action@v0.1.0
+  with:
+    baseline: contracts/baseline.json
+    candidate: contracts/candidate.json
+    fail-on: breaking
+```
+
+See [Install](install.md) for a full workflow. The `contract-guard` GitHub repo must be public (or your token must have access).
+
 ## Runtime
 
 ```yaml
@@ -36,25 +48,14 @@ GitHub Actions JavaScript runtimes support `node20` and `node24` only (not `node
 | `warning` | Warning finding count |
 | `report-path` | Path to written Markdown report |
 
-## Minimal workflow
+## Dogfood in this repository
 
 ```yaml
-name: ContractGuard
-on: pull_request
-jobs:
-  contractguard:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./packages/github-action
-        with:
-          baseline: examples/fixtures/baseline-users.json
-          candidate: examples/fixtures/candidate-users.json
-          title: "Breaking API Changes Detected in /v1/users"
-          fail-on: breaking
+- uses: ./packages/github-action
+  with:
+    baseline: examples/fixtures/baseline-users.json
+    candidate: examples/fixtures/candidate-users.json
+    fail-on: never
 ```
 
 Full example: [`examples/workflows/contractguard.yml`](../examples/workflows/contractguard.yml).
@@ -69,9 +70,7 @@ The Markdown reporter always includes:
 
 On subsequent PR pushes the Action updates the existing comment instead of creating duplicates.
 
-## Rebuilding the Action bundle
-
-After changing Action or core source:
+## Rebuilding the Action bundle (maintainers)
 
 ```bash
 pnpm --filter @contractguard/core build

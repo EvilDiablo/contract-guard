@@ -1,30 +1,31 @@
 # Roadmap
 
-## MVP (complete — gated)
+Public product plans for ContractGuard. (Private business notes stay outside this repo — see gitignored `local/`.)
+
+## Shipped (0.1.0)
 
 - Semantic JSON compare (SchemaIR)
 - CLI: `compare`, `capture`, `generate`
-- GitHub Action with sticky PR comments + committed bundle
+- GitHub Action with sticky PR comments
 - Config + default ignore paths
 - Docs + `pnpm mvp:smoke`
+- npm packages `@contractguard/core` and `@contractguard/cli`
 
-See [MVP checklist](mvp-checklist.md).
+See [Install](install.md) and [Changelog](../CHANGELOG.md).
 
-## Deferred (Phase 3 — do not start until MVP gate stays green)
+## Next
 
-Ordered by distribution leverage:
+1. **OpenAPI support** — compare OpenAPI YAML/JSON for a path/operation
+2. **Action packaging polish** — release workflow on `v*` tags; optional Marketplace listing
+3. **Capture in CI examples** — staging endpoint snapshots via `contractguard.config.json`
+4. **DX** — more fixtures, clearer ignore-path docs, contributor guides
 
-1. **OpenAPI support** — compare OpenAPI YAML/JSON for a path/operation; CLI flags for baseline/candidate specs.
-2. **npm publish** — dry-run then publish `@contractguard/core` + `@contractguard/cli` (`0.1.0`), `CHANGELOG.md`, workspace protocol rewrite.
-3. **Action distribution** — release workflow that rebuilds and refreshes committed Action `dist/` on tag; Marketplace listing.
-4. **Capture in CI** — example workflow hitting staging via `examples/contractguard.config.json`.
-5. **Production SaaS** (`apps/web`) — auth, Drizzle migrations, real run history, Slack/Teams alerts, Stripe org onboarding. Treat current web app as scaffold only.
+## Later / ideas
 
-## Explicitly out of near-term scope
+- Experimental hosted UI (`apps/web`) for exploring diffs in a browser
+- gRPC / protobuf adapters
+- Broader schema-drift monitoring beyond REST JSON
 
-- gRPC / protobuf
-- Full LLM output monitoring product (same engine can apply later)
+## Contributing ideas
 
-## Contributing to roadmap items
-
-Open an issue describing the use case, then follow [Contributing](../CONTRIBUTING.md). Prefer landing OpenAPI + publish before expanding SaaS surface area.
+Open an issue with your use case, then follow [Contributing](../CONTRIBUTING.md).

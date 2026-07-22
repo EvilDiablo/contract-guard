@@ -8,8 +8,12 @@ export default function HomePage() {
           fields, and nullability shifts — reported on every pull request.
         </p>
         <div className="cta-row">
-          <a className="btn btn-primary" href="/pricing">
-            Start free with the CLI
+          <a
+            className="btn btn-primary"
+            href="https://github.com/EvilDiablo/contract-guard#install-recommended"
+            rel="noreferrer"
+          >
+            Get the CLI
           </a>
           <a className="btn btn-secondary" href="/dashboard">
             Open dashboard
