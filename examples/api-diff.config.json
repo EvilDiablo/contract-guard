@@ -1,0 +1,25 @@
+{
+  "failOn": "breaking",
+  "additiveSeverity": "info",
+  "side": "response",
+  "ignorePaths": ["*.trace_id"],
+  "baseUrl": "https://httpbin.org",
+  "endpoints": [
+    {
+      "name": "get-json",
+      "method": "GET",
+      "url": "/json"
+    },
+    {
+      "name": "post-anything",
+      "method": "POST",
+      "url": "/anything",
+      "headers": {
+        "X-Api-Diff": "1"
+      },
+      "body": {
+        "probe": true
+      }
+    }
+  ]
+}

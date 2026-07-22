@@ -1,0 +1,6 @@
+{
+  "failOn": "breaking",
+  "additiveSeverity": "info",
+  "side": "response",
+  "ignorePaths": ["*.trace_id"]
+}

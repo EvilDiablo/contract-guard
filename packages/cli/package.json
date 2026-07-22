@@ -1,0 +1,44 @@
+{
+  "name": "@api-diff/cli",
+  "version": "0.1.0",
+  "description": "CLI for semantic API response and payload diffs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/api-diff/api-response-and-payload-diff-engine.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/api-diff/api-response-and-payload-diff-engine#readme",
+  "type": "module",
+  "bin": {
+    "api-diff": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@api-diff/core": "workspace:*",
+    "citty": "^0.1.6",
+    "consola": "^3.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "@api-diff/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "lint": "next lint",
+    "test": "vitest run --passWithNoTests",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push"
+  },
+  "dependencies": {
+    "@api-diff/core": "workspace:*",
+    "@octokit/auth-app": "^7.1.4",
+    "@octokit/rest": "^21.0.2",
+    "@octokit/webhooks": "^13.4.1",
+    "drizzle-orm": "^0.38.3",
+    "next": "^15.1.3",
+    "postgres": "^3.4.5",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "stripe": "^17.5.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "drizzle-kit": "^0.30.1",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

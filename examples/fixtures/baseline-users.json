@@ -1,0 +1,12 @@
+{
+  "id": 101,
+  "user_id": 42,
+  "email": "ada@example.com",
+  "price": 19.99,
+  "is_active": true,
+  "address": {
+    "city": "London",
+    "zip": "SW1A"
+  },
+  "created_at": 1712000000
+}

@@ -1,0 +1,127 @@
+import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { resolve } from "node:path";
+import * as core from "@actions/core";
+import * as github from "@actions/github";
+import {
+  compareJson,
+  exitCodeForReport,
+  formatMarkdownReport,
+  loadConfigFromJson,
+  type FailOn,
+  type JsonValue,
+} from "@api-diff/core";
+
+const MARKER = "<!-- api-diff-report -->";
+
+async function readJson(path: string): Promise<JsonValue> {
+  return JSON.parse(await readFile(path, "utf8")) as JsonValue;
+}
+
+async function upsertStickyComment(
+  token: string,
+  body: string,
+): Promise<void> {
+  const ctx = github.context;
+  if (!ctx.payload.pull_request) {
+    core.info("Not a pull_request event — skipping comment");
+    return;
+  }
+
+  const octokit = github.getOctokit(token);
+  const { owner, repo } = ctx.repo;
+  const issue_number = ctx.payload.pull_request.number;
+
+  const { data: comments } = await octokit.rest.issues.listComments({
+    owner,
+    repo,
+    issue_number,
+    per_page: 100,
+  });
+
+  const existing = comments.find((c) => c.body?.includes(MARKER));
+  if (existing) {
+    await octokit.rest.issues.updateComment({
+      owner,
+      repo,
+      comment_id: existing.id,
+      body,
+    });
+    core.info(`Updated sticky comment #${existing.id}`);
+  } else {
+    await octokit.rest.issues.createComment({
+      owner,
+      repo,
+      issue_number,
+      body,
+    });
+    core.info("Created sticky PR comment");
+  }
+}
+
+async function run(): Promise<void> {
+  try {
+    const baselinePath = core.getInput("baseline", { required: true });
+    const candidatePath = core.getInput("candidate", { required: true });
+    const configPath = core.getInput("config");
+    const title = core.getInput("title") || "API Diff Report";
+    const failOn = (core.getInput("fail-on") || "breaking") as FailOn;
+    const shouldComment = (core.getInput("comment") || "true") === "true";
+    const token = core.getInput("github-token") || process.env.GITHUB_TOKEN || "";
+
+    let ignorePaths: string[] = [];
+    let additiveSeverity: "info" | "warning" = "info";
+    let side: "response" | "request" = "response";
+    let configFailOn: FailOn | undefined;
+
+    if (configPath) {
+      const config = loadConfigFromJson(await readFile(resolve(configPath), "utf8"));
+      ignorePaths = config.ignorePaths ?? [];
+      additiveSeverity = config.additiveSeverity ?? "info";
+      side = config.side ?? "response";
+      configFailOn = config.failOn;
+    }
+
+    const baseline = await readJson(resolve(baselinePath));
+    const candidate = await readJson(resolve(candidatePath));
+
+    const report = compareJson(baseline, candidate, {
+      ignorePaths,
+      additiveSeverity,
+      side,
+      baselineLabel: baselinePath,
+      candidateLabel: candidatePath,
+    });
+
+    const markdown = formatMarkdownReport(report, title);
+    const reportPath = resolve("api-diff-report.md");
+    await mkdir(resolve("."), { recursive: true });
+    await writeFile(reportPath, markdown, "utf8");
+
+    core.setOutput("breaking", String(report.summary.breaking));
+    core.setOutput("warning", String(report.summary.warning));
+    core.setOutput("report-path", reportPath);
+
+    await core.summary
+      .addRaw(markdown)
+      .write();
+
+    if (shouldComment && token) {
+      await upsertStickyComment(token, markdown);
+    } else if (shouldComment && !token) {
+      core.warning("No github-token available; skipped PR comment");
+    }
+
+    const code = exitCodeForReport(report, configFailOn ?? failOn);
+    if (code !== 0) {
+      core.setFailed(
+        `API diff found issues: ${report.summary.breaking} breaking, ${report.summary.warning} warning`,
+      );
+    } else {
+      core.info("API diff clean");
+    }
+  } catch (err) {
+    core.setFailed(err instanceof Error ? err.message : String(err));
+  }
+}
+
+void run();

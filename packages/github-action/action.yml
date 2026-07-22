@@ -1,0 +1,43 @@
+name: "API Diff"
+description: "Semantic API response & payload diff with sticky PR comments"
+author: "api-diff"
+branding:
+  icon: "git-pull-request"
+  color: "orange"
+inputs:
+  baseline:
+    description: "Path to baseline JSON snapshot"
+    required: true
+  candidate:
+    description: "Path to candidate JSON snapshot"
+    required: true
+  config:
+    description: "Path to api-diff.config.json"
+    required: false
+  title:
+    description: "PR comment title"
+    required: false
+    default: "API Diff Report"
+  fail-on:
+    description: "breaking | warning | never"
+    required: false
+    default: "breaking"
+  comment:
+    description: "Post sticky PR comment (true/false)"
+    required: false
+    default: "true"
+  github-token:
+    description: "GitHub token for PR comments"
+    required: false
+    default: ${{ github.token }}
+outputs:
+  breaking:
+    description: "Number of breaking findings"
+  warning:
+    description: "Number of warning findings"
+  report-path:
+    description: "Path to written markdown report"
+runs:
+  # GitHub Actions supports node20 | node24 (not node22) for JavaScript actions.
+  using: "node24"
+  main: "dist/main.js"

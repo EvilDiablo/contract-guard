@@ -1,0 +1,9 @@
+{
+  "id": "101",
+  "userId": 42,
+  "price": "19.99",
+  "is_active": true,
+  "address": null,
+  "new_field": "test",
+  "created_at": 1712009999
+}
