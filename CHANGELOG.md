@@ -2,6 +2,12 @@
 
 All notable changes to ContractGuard are documented in this file.
 
+## [0.2.1] — unreleased
+
+### Fixed
+
+- Directory compare no longer treats `capture`’s `manifest.json` as an API sample; when a manifest is present, only listed snapshot files are loaded
+
 ## [0.2.0] — 2026-07-23
 
 ### Added

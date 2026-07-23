@@ -48,7 +48,10 @@ export {
 } from "./config.js";
 export { captureEndpoints } from "./capture.js";
 export type { CaptureOptions, CaptureResult } from "./capture.js";
-export { loadJsonSamples } from "./load-samples.js";
+export {
+  CAPTURE_MANIFEST_FILENAME,
+  loadJsonSamples,
+} from "./load-samples.js";
 export type { LoadedSamples } from "./load-samples.js";
 export {
   generateTypeScript,

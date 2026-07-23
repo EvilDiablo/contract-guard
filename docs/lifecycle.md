@@ -7,7 +7,7 @@ ContractGuard is framework-agnostic: you save JSON snapshots any way you like (t
 Produce one or more response (or request) bodies that represent the contract you care about.
 
 - **Single sample** — one representative JSON file
-- **Multiple samples** — a directory of `*.json` files (merged before diffing)
+- **Multiple samples** — a directory of `*.json` files (merged before diffing). If the directory came from `contractguard capture`, `manifest.json` is ignored as a sample.
 
 Fields that appear in only some baseline samples become **optional**. Dropping an optional field on the candidate is not breaking.
 

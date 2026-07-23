@@ -2627,7 +2627,7 @@ var require_parseParams = __commonJS({
 var require_basename = __commonJS({
   "../../node_modules/.pnpm/@fastify+busboy@2.1.1/node_modules/@fastify/busboy/lib/utils/basename.js"(exports, module) {
     "use strict";
-    module.exports = function basename(path2) {
+    module.exports = function basename2(path2) {
       if (typeof path2 !== "string") {
         return "";
       }
@@ -2654,7 +2654,7 @@ var require_multipart = __commonJS({
     var Dicer = require_Dicer();
     var parseParams = require_parseParams();
     var decodeText = require_decodeText();
-    var basename = require_basename();
+    var basename2 = require_basename();
     var getLimit = require_getLimit();
     var RE_BOUNDARY = /^boundary$/i;
     var RE_FIELD = /^form-data$/i;
@@ -2771,7 +2771,7 @@ var require_multipart = __commonJS({
               } else if (RE_FILENAME.test(parsed[i][0])) {
                 filename = parsed[i][1];
                 if (!preservePath) {
-                  filename = basename(filename);
+                  filename = basename2(filename);
                 }
               }
             }
@@ -29795,7 +29795,7 @@ var NEVER = INVALID;
 
 // ../core/dist/index.js
 import { readdir, readFile, stat } from "fs/promises";
-import { join, resolve } from "path";
+import { basename, join, resolve } from "path";
 var DEFAULT_IGNORE_PATHS = [
   "*.created_at",
   "*.updated_at",
@@ -30398,14 +30398,24 @@ function loadConfigFromJson(text) {
   const raw = JSON.parse(text);
   return parseConfig(raw);
 }
+var CAPTURE_MANIFEST_FILENAME = "manifest.json";
+var RESERVED_SAMPLE_FILENAMES = /* @__PURE__ */ new Set([CAPTURE_MANIFEST_FILENAME]);
 async function readJsonFile(path2) {
   const text = await readFile(path2, "utf8");
   return JSON.parse(text);
+}
+function isReservedSampleFilename(name) {
+  return RESERVED_SAMPLE_FILENAMES.has(name.toLowerCase());
 }
 async function loadJsonSamples(inputPath) {
   const resolved = resolve(inputPath);
   const info2 = await stat(resolved);
   if (info2.isFile()) {
+    if (isReservedSampleFilename(basename(resolved))) {
+      throw new Error(
+        `Refusing to load capture metadata as a sample: ${basename(resolved)}`
+      );
+    }
     const sample = await readJsonFile(resolved);
     return {
       samples: [sample],
@@ -30417,9 +30427,21 @@ async function loadJsonSamples(inputPath) {
     throw new Error(`Not a file or directory: ${inputPath}`);
   }
   const entries = await readdir(resolved);
-  const jsonFiles = entries.filter((name) => name.toLowerCase().endsWith(".json")).sort((a, b) => a.localeCompare(b)).map((name) => join(resolved, name));
+  const manifestPath = join(resolved, CAPTURE_MANIFEST_FILENAME);
+  let jsonFiles = [];
+  if (entries.some((name) => name.toLowerCase() === CAPTURE_MANIFEST_FILENAME)) {
+    const listed = await snapshotFilesFromManifest(manifestPath, resolved);
+    if (listed.length > 0) {
+      jsonFiles = listed;
+    }
+  }
   if (jsonFiles.length === 0) {
-    throw new Error(`No .json files found in directory: ${inputPath}`);
+    jsonFiles = entries.filter(
+      (name) => name.toLowerCase().endsWith(".json") && !isReservedSampleFilename(name)
+    ).sort((a, b) => a.localeCompare(b)).map((name) => join(resolved, name));
+  }
+  if (jsonFiles.length === 0) {
+    throw new Error(`No .json sample files found in directory: ${inputPath}`);
   }
   const samples = [];
   for (const file of jsonFiles) {
@@ -30427,6 +30449,24 @@ async function loadJsonSamples(inputPath) {
   }
   const label = jsonFiles.length === 1 ? inputPath : `${inputPath} (${jsonFiles.length} samples)`;
   return { samples, files: jsonFiles, label };
+}
+async function snapshotFilesFromManifest(manifestPath, dir) {
+  try {
+    const raw = await readJsonFile(manifestPath);
+    if (!Array.isArray(raw)) return [];
+    const files = [];
+    for (const entry of raw) {
+      if (entry && typeof entry === "object" && !Array.isArray(entry) && typeof entry.file === "string") {
+        const name = entry.file;
+        if (!name.toLowerCase().endsWith(".json")) continue;
+        if (isReservedSampleFilename(basename(name))) continue;
+        files.push(join(dir, basename(name)));
+      }
+    }
+    return files.sort((a, b) => basename(a).localeCompare(basename(b)));
+  } catch {
+    return [];
+  }
 }
 
 // src/main.ts

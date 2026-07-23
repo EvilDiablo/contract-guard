@@ -27,7 +27,7 @@ node packages/cli/dist/index.js <command> ...
 
 ### `compare`
 
-Semantically compare two JSON snapshots. Each of `-b` / `-c` may be a **single JSON file** or a **directory of `*.json` files** (sorted, merged into one schema before diffing).
+Semantically compare two JSON snapshots. Each of `-b` / `-c` may be a **single JSON file** or a **directory of `*.json` files** (sorted, merged into one schema before diffing). Capture dirs are safe: `manifest.json` is skipped (and when present, only the snapshot files it lists are loaded).
 
 ```bash
 pnpm contractguard compare \
