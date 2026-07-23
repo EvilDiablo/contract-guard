@@ -1,6 +1,6 @@
 {
   "name": "@contractguard/core",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Semantic API contract diff engine for JSON responses and payloads",
   "license": "MIT",
   "repository": {
