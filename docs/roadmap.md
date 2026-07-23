@@ -11,11 +11,12 @@ Public product plans for ContractGuard. (Private business notes stay outside thi
 - Docs + `pnpm mvp:smoke`
 - npm packages `@contractguard/core` and `@contractguard/cli`
 
-## Shipped (0.2.0 — next publish)
+## Shipped (0.2.x)
 
-- **Multi-sample inference** — `-b` / `-c` (and Action inputs) accept a file or directory of `*.json`; schemas merged before diff
+- **Multi-sample inference** — `-b` / `-c` accept a file or directory of `*.json`; schemas merged before diff
 - Optional fields from partial presence; removal of non-required fields is not breaking
-- Snapshot [lifecycle](lifecycle.md) docs
+- Snapshot [lifecycle](lifecycle.md) docs; capture `manifest.json` skipped on compare
+- **Multi-file generate** — `generate -i <dir>` writes one type per snapshot into a shared barrel; names from capture manifest or filenames
 
 See [Install](install.md) and [Changelog](../CHANGELOG.md).
 

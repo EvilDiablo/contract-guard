@@ -86,11 +86,17 @@ Env: `CONTRACTGUARD_TOKEN` (preferred) or legacy `API_DIFF_TOKEN` → `Authoriza
 
 ### `generate`
 
-Emit TypeScript + Zod from a JSON snapshot.
+Emit TypeScript + Zod from a JSON file **or a directory** of snapshots (e.g. a `capture` output folder).
 
 ```bash
+# Single file (optional --name; default derives from filename)
 pnpm contractguard generate -i snapshot.json -o types/ --name ApiResponse
+
+# Directory: one type per snapshot, names from capture manifest or filenames
+pnpm contractguard generate -i contracts/candidate -o types/
 ```
+
+Writes `types/api.ts` and `types/api.zod.ts` with **all** exports in one barrel (no overwrite of earlier endpoints). `manifest.json` is skipped. `--name` only applies when `-i` is a single file.
 
 ## Exit codes
 

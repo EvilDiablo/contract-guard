@@ -2,6 +2,13 @@
 
 All notable changes to ContractGuard are documented in this file.
 
+## [0.2.2] — 2026-07-23
+
+### Added
+
+- `generate -i <dir>` emits one TypeScript/Zod type per snapshot (names from capture manifest or filenames) into a shared `api.ts` / `api.zod.ts` barrel
+- `generateSchemasBarrel` / `typeNameFromLabel` in `@contractguard/core`
+
 ## [0.2.1] — 2026-07-23
 
 ### Fixed

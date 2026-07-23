@@ -30,6 +30,7 @@ describe("loadJsonSamples", () => {
     expect(loaded.samples).toHaveLength(2);
     expect(loaded.files.every((f) => !f.endsWith("manifest.json"))).toBe(true);
     expect(loaded.samples).toEqual([{ phase: "start" }, { phase: "stop" }]);
+    expect(loaded.names).toEqual(["cycle-start", "cycle-stop"]);
   });
 
   it("loads only files listed in manifest when present", async () => {

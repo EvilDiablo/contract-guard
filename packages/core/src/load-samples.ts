@@ -11,6 +11,11 @@ export interface LoadedSamples {
   samples: JsonValue[];
   /** Paths of files that were loaded (absolute). */
   files: string[];
+  /**
+   * Human labels for codegen / display (parallel to `files`).
+   * From capture manifest `name` when present, else file basename without `.json`.
+   */
+  names: string[];
   /** Human label, e.g. `fixtures/baseline (3 samples)`. */
   label: string;
 }
@@ -22,6 +27,15 @@ async function readJsonFile(path: string): Promise<JsonValue> {
 
 function isReservedSampleFilename(name: string): boolean {
   return RESERVED_SAMPLE_FILENAMES.has(name.toLowerCase());
+}
+
+function nameFromFilename(filePath: string): string {
+  return basename(filePath).replace(/\.json$/i, "");
+}
+
+interface ManifestEntry {
+  file: string;
+  name: string;
 }
 
 /**
@@ -43,6 +57,7 @@ export async function loadJsonSamples(inputPath: string): Promise<LoadedSamples>
     return {
       samples: [sample],
       files: [resolved],
+      names: [nameFromFilename(resolved)],
       label: inputPath,
     };
   }
@@ -53,50 +68,54 @@ export async function loadJsonSamples(inputPath: string): Promise<LoadedSamples>
 
   const entries = await readdir(resolved);
   const manifestPath = join(resolved, CAPTURE_MANIFEST_FILENAME);
-  let jsonFiles: string[] = [];
+  let listed: ManifestEntry[] = [];
 
   if (entries.some((name) => name.toLowerCase() === CAPTURE_MANIFEST_FILENAME)) {
-    const listed = await snapshotFilesFromManifest(manifestPath, resolved);
-    if (listed.length > 0) {
-      jsonFiles = listed;
-    }
+    listed = await snapshotEntriesFromManifest(manifestPath, resolved);
   }
 
-  if (jsonFiles.length === 0) {
-    jsonFiles = entries
+  if (listed.length === 0) {
+    listed = entries
       .filter(
         (name) =>
           name.toLowerCase().endsWith(".json") && !isReservedSampleFilename(name),
       )
       .sort((a, b) => a.localeCompare(b))
-      .map((name) => join(resolved, name));
+      .map((name) => ({
+        file: join(resolved, name),
+        name: nameFromFilename(name),
+      }));
   }
 
-  if (jsonFiles.length === 0) {
+  if (listed.length === 0) {
     throw new Error(`No .json sample files found in directory: ${inputPath}`);
   }
 
   const samples: JsonValue[] = [];
-  for (const file of jsonFiles) {
-    samples.push(await readJsonFile(file));
+  const files: string[] = [];
+  const names: string[] = [];
+  for (const entry of listed) {
+    samples.push(await readJsonFile(entry.file));
+    files.push(entry.file);
+    names.push(entry.name);
   }
 
   const label =
-    jsonFiles.length === 1
+    files.length === 1
       ? inputPath
-      : `${inputPath} (${jsonFiles.length} samples)`;
+      : `${inputPath} (${files.length} samples)`;
 
-  return { samples, files: jsonFiles, label };
+  return { samples, files, names, label };
 }
 
-async function snapshotFilesFromManifest(
+async function snapshotEntriesFromManifest(
   manifestPath: string,
   dir: string,
-): Promise<string[]> {
+): Promise<ManifestEntry[]> {
   try {
     const raw = await readJsonFile(manifestPath);
     if (!Array.isArray(raw)) return [];
-    const files: string[] = [];
+    const out: ManifestEntry[] = [];
     for (const entry of raw) {
       if (
         entry &&
@@ -104,13 +123,20 @@ async function snapshotFilesFromManifest(
         !Array.isArray(entry) &&
         typeof (entry as { file?: unknown }).file === "string"
       ) {
-        const name = (entry as { file: string }).file;
-        if (!name.toLowerCase().endsWith(".json")) continue;
-        if (isReservedSampleFilename(basename(name))) continue;
-        files.push(join(dir, basename(name)));
+        const fileName = (entry as { file: string }).file;
+        if (!fileName.toLowerCase().endsWith(".json")) continue;
+        if (isReservedSampleFilename(basename(fileName))) continue;
+        const manifestName =
+          typeof (entry as { name?: unknown }).name === "string"
+            ? (entry as { name: string }).name.trim()
+            : "";
+        out.push({
+          file: join(dir, basename(fileName)),
+          name: manifestName || nameFromFilename(fileName),
+        });
       }
     }
-    return files.sort((a, b) => basename(a).localeCompare(basename(b)));
+    return out.sort((a, b) => basename(a.file).localeCompare(basename(b.file)));
   } catch {
     return [];
   }

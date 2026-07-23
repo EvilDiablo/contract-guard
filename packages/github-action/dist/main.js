@@ -30407,6 +30407,9 @@ async function readJsonFile(path2) {
 function isReservedSampleFilename(name) {
   return RESERVED_SAMPLE_FILENAMES.has(name.toLowerCase());
 }
+function nameFromFilename(filePath) {
+  return basename(filePath).replace(/\.json$/i, "");
+}
 async function loadJsonSamples(inputPath) {
   const resolved = resolve(inputPath);
   const info2 = await stat(resolved);
@@ -30420,6 +30423,7 @@ async function loadJsonSamples(inputPath) {
     return {
       samples: [sample],
       files: [resolved],
+      names: [nameFromFilename(resolved)],
       label: inputPath
     };
   }
@@ -30428,42 +30432,50 @@ async function loadJsonSamples(inputPath) {
   }
   const entries = await readdir(resolved);
   const manifestPath = join(resolved, CAPTURE_MANIFEST_FILENAME);
-  let jsonFiles = [];
+  let listed = [];
   if (entries.some((name) => name.toLowerCase() === CAPTURE_MANIFEST_FILENAME)) {
-    const listed = await snapshotFilesFromManifest(manifestPath, resolved);
-    if (listed.length > 0) {
-      jsonFiles = listed;
-    }
+    listed = await snapshotEntriesFromManifest(manifestPath, resolved);
   }
-  if (jsonFiles.length === 0) {
-    jsonFiles = entries.filter(
+  if (listed.length === 0) {
+    listed = entries.filter(
       (name) => name.toLowerCase().endsWith(".json") && !isReservedSampleFilename(name)
-    ).sort((a, b) => a.localeCompare(b)).map((name) => join(resolved, name));
+    ).sort((a, b) => a.localeCompare(b)).map((name) => ({
+      file: join(resolved, name),
+      name: nameFromFilename(name)
+    }));
   }
-  if (jsonFiles.length === 0) {
+  if (listed.length === 0) {
     throw new Error(`No .json sample files found in directory: ${inputPath}`);
   }
   const samples = [];
-  for (const file of jsonFiles) {
-    samples.push(await readJsonFile(file));
+  const files = [];
+  const names = [];
+  for (const entry of listed) {
+    samples.push(await readJsonFile(entry.file));
+    files.push(entry.file);
+    names.push(entry.name);
   }
-  const label = jsonFiles.length === 1 ? inputPath : `${inputPath} (${jsonFiles.length} samples)`;
-  return { samples, files: jsonFiles, label };
+  const label = files.length === 1 ? inputPath : `${inputPath} (${files.length} samples)`;
+  return { samples, files, names, label };
 }
-async function snapshotFilesFromManifest(manifestPath, dir) {
+async function snapshotEntriesFromManifest(manifestPath, dir) {
   try {
     const raw = await readJsonFile(manifestPath);
     if (!Array.isArray(raw)) return [];
-    const files = [];
+    const out = [];
     for (const entry of raw) {
       if (entry && typeof entry === "object" && !Array.isArray(entry) && typeof entry.file === "string") {
-        const name = entry.file;
-        if (!name.toLowerCase().endsWith(".json")) continue;
-        if (isReservedSampleFilename(basename(name))) continue;
-        files.push(join(dir, basename(name)));
+        const fileName = entry.file;
+        if (!fileName.toLowerCase().endsWith(".json")) continue;
+        if (isReservedSampleFilename(basename(fileName))) continue;
+        const manifestName = typeof entry.name === "string" ? entry.name.trim() : "";
+        out.push({
+          file: join(dir, basename(fileName)),
+          name: manifestName || nameFromFilename(fileName)
+        });
       }
     }
-    return files.sort((a, b) => basename(a).localeCompare(basename(b)));
+    return out.sort((a, b) => basename(a.file).localeCompare(basename(b.file)));
   } catch {
     return [];
   }

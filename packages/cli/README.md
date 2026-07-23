@@ -59,6 +59,7 @@ npx contractguard capture -C contractguard.config.json -o captures/
 
 ```bash
 npx contractguard generate -i snapshot.json -o types/ --name ApiResponse
+npx contractguard generate -i captures/ -o types/
 ```
 
 ## GitHub Action

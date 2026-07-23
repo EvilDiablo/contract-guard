@@ -57,4 +57,7 @@ export {
   generateTypeScript,
   generateZod,
   generateSchemas,
+  generateSchemasBarrel,
+  typeNameFromLabel,
 } from "./codegen.js";
+export type { NamedSchemaInput } from "./codegen.js";

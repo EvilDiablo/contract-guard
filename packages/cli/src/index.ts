@@ -9,20 +9,13 @@ import {
   exitCodeForReport,
   formatMarkdownReport,
   formatTextReport,
-  generateSchemas,
+  generateSchemasBarrel,
   loadConfigFromJson,
   loadJsonSamples,
   normalizeValue,
-  normalizeValues,
   type ContractGuardConfig,
   type FailOn,
-  type JsonValue,
 } from "@contractguard/core";
-
-async function readJsonFile(path: string): Promise<JsonValue> {
-  const text = await readFile(path, "utf8");
-  return JSON.parse(text) as JsonValue;
-}
 
 async function tryLoadConfig(explicit?: string): Promise<ContractGuardConfig> {
   if (explicit) {
@@ -137,13 +130,16 @@ const compare = defineCommand({
     }
 
     if (args.codegen) {
-      const schema = normalizeValues(candidateLoaded.samples);
-      const { typescript, zod } = generateSchemas(schema, { typeName: "ApiResponse" });
+      const inputs = candidateLoaded.samples.map((sample, i) => ({
+        name: candidateLoaded.names[i] ?? `Sample${i + 1}`,
+        schema: normalizeValue(sample),
+      }));
+      const { typescript, zod, typeNames } = generateSchemasBarrel(inputs);
       const dir = resolve(args.codegen);
       await mkdir(dir, { recursive: true });
       await writeFile(resolve(dir, "api.ts"), typescript, "utf8");
       await writeFile(resolve(dir, "api.zod.ts"), zod, "utf8");
-      consola.success(`Generated types in ${dir}`);
+      consola.success(`Generated types in ${dir} (${typeNames.join(", ")})`);
     }
 
     const failOn = (args.failOn ?? config.failOn ?? "breaking") as FailOn;
@@ -248,12 +244,13 @@ const capture = defineCommand({
 const generate = defineCommand({
   meta: {
     name: "generate",
-    description: "Generate TypeScript types and Zod schemas from a JSON snapshot",
+    description:
+      "Generate TypeScript types and Zod schemas from a JSON file or capture directory",
   },
   args: {
     input: {
       type: "string",
-      description: "Path to JSON file",
+      description: "Path to JSON file or directory of *.json snapshots",
       required: true,
       alias: "i",
     },
@@ -265,26 +262,35 @@ const generate = defineCommand({
     },
     name: {
       type: "string",
-      description: "Type name",
-      default: "ApiResponse",
+      description:
+        "Type name (single-file only; directories use filename / capture manifest names)",
     },
   },
   async run({ args }) {
-    const json = await readJsonFile(resolve(args.input));
-    const schema = normalizeValue(json);
-    const { typescript, zod } = generateSchemas(schema, { typeName: args.name });
+    const loaded = await loadJsonSamples(args.input);
+    const inputs = loaded.samples.map((sample, i) => ({
+      name: loaded.names[i] ?? `Sample${i + 1}`,
+      schema: normalizeValue(sample),
+    }));
+    const typeNameOverride =
+      loaded.samples.length === 1 && args.name ? args.name : undefined;
+    const { typescript, zod, typeNames } = generateSchemasBarrel(inputs, {
+      typeName: typeNameOverride,
+    });
     const dir = resolve(args.out);
     await mkdir(dir, { recursive: true });
     await writeFile(resolve(dir, "api.ts"), typescript, "utf8");
     await writeFile(resolve(dir, "api.zod.ts"), zod, "utf8");
-    consola.success(`Wrote ${dir}/api.ts and ${dir}/api.zod.ts`);
+    consola.success(
+      `Wrote ${dir}/api.ts and ${dir}/api.zod.ts (${typeNames.join(", ")})`,
+    );
   },
 });
 
 const main = defineCommand({
   meta: {
     name: "contractguard",
-    version: "0.1.0",
+    version: "0.2.2",
     description: "Semantic API response & payload diff engine",
   },
   subCommands: {

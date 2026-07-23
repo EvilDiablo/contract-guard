@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { compareJson, compareJsonSamples } from "./compare.js";
-import { generateTypeScript, generateZod } from "./codegen.js";
+import {
+  generateSchemasBarrel,
+  generateTypeScript,
+  generateZod,
+} from "./codegen.js";
 import { normalizeValue, normalizeValues } from "./normalize.js";
 import { exitCodeForReport, formatMarkdownReport } from "./report.js";
 import { keySimilarity } from "./rename.js";
@@ -172,5 +176,18 @@ describe("codegen", () => {
     expect(ts).toContain('"id"');
     expect(zod).toContain('import { z } from "zod"');
     expect(zod).toContain("z.object");
+  });
+
+  it("emits a barrel with one type per named schema", () => {
+    const barrel = generateSchemasBarrel([
+      { name: "cycle-start", schema: normalizeValue({ phase: "start" }) },
+      { name: "cycle-stop", schema: normalizeValue({ phase: "stop" }) },
+    ]);
+    expect(barrel.typeNames).toEqual(["CycleStart", "CycleStop"]);
+    expect(barrel.typescript).toContain("export interface CycleStart");
+    expect(barrel.typescript).toContain("export interface CycleStop");
+    expect(barrel.zod).toContain("cycleStartSchema");
+    expect(barrel.zod).toContain("cycleStopSchema");
+    expect(barrel.zod.match(/import \{ z \} from "zod"/g)?.length).toBe(1);
   });
 });

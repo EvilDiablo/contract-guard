@@ -78,8 +78,32 @@ function zodExpr(node: SchemaNode): string {
 function toTypeName(name: string): string {
   const cleaned = name.replace(/[^a-zA-Z0-9]+/g, " ").trim();
   const parts = cleaned.split(/\s+/).filter(Boolean);
-  const pascal = parts.map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join("");
-  return pascal || "ApiSchema";
+  let pascal = parts.map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join("");
+  if (!pascal) return "ApiSchema";
+  // TypeScript identifiers cannot start with a digit (e.g. "01.json").
+  if (/^[0-9]/.test(pascal)) pascal = `N${pascal}`;
+  return pascal;
+}
+
+/** Public helper: turn a file or capture name into a PascalCase type name. */
+export function typeNameFromLabel(label: string): string {
+  return toTypeName(label);
+}
+
+function toZodName(typeName: string): string {
+  const base = toTypeName(typeName);
+  return `${base.charAt(0).toLowerCase()}${base.slice(1)}Schema`;
+}
+
+function uniqueNames(labels: string[]): string[] {
+  const used = new Map<string, number>();
+  return labels.map((label) => {
+    let name = toTypeName(label);
+    const count = used.get(name) ?? 0;
+    used.set(name, count + 1);
+    if (count > 0) name = `${name}${count + 1}`;
+    return name;
+  });
 }
 
 /** Generate TypeScript interface/type aliases from SchemaIR. */
@@ -114,11 +138,56 @@ export function generateSchemas(
   options: { typeName?: string; zodName?: string } = {},
 ): { typescript: string; zod: string } {
   const typeName = options.typeName ?? "ApiResponse";
-  const zodName = options.zodName ?? `${typeName.charAt(0).toLowerCase()}${typeName.slice(1)}Schema`;
+  const zodName = options.zodName ?? toZodName(typeName);
   return {
     typescript: generateTypeScript(schema, typeName),
     zod: generateZod(schema, zodName),
   };
+}
+
+export interface NamedSchemaInput {
+  /** Label used to derive the type name (filename or capture manifest name). */
+  name: string;
+  schema: SchemaNode;
+}
+
+/**
+ * Generate a TypeScript + Zod barrel for one or more schemas (one type per input).
+ * Does not merge schemas — each snapshot keeps its own type.
+ */
+export function generateSchemasBarrel(
+  inputs: NamedSchemaInput[],
+  options: { typeName?: string } = {},
+): { typescript: string; zod: string; typeNames: string[] } {
+  if (inputs.length === 0) {
+    throw new Error("generateSchemasBarrel requires at least one schema");
+  }
+
+  const labels =
+    inputs.length === 1 && options.typeName
+      ? [options.typeName]
+      : inputs.map((i) => i.name);
+  const typeNames = uniqueNames(labels);
+
+  const typescript = typeNames
+    .map((typeName, i) => generateTypeScript(inputs[i]!.schema, typeName).trimEnd())
+    .join("\n\n") + "\n";
+
+  const zodBody = typeNames
+    .map((typeName, i) => {
+      const zodName = toZodName(typeName);
+      const expr = zodExpr(inputs[i]!.schema);
+      return [
+        `export const ${zodName} = ${expr};`,
+        ``,
+        `export type ${typeName} = z.infer<typeof ${zodName}>;`,
+      ].join("\n");
+    })
+    .join("\n\n");
+
+  const zod = [`import { z } from "zod";`, ``, zodBody, ``].join("\n");
+
+  return { typescript, zod, typeNames };
 }
 
 export type { ObjectSchema };

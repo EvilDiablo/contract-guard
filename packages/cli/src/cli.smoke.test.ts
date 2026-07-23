@@ -72,6 +72,21 @@ describe("cli smoke", () => {
     }
   });
 
+  it("generates one type per snapshot from a directory", () => {
+    const multiBaseline = join(root, "examples/fixtures/multi/baseline");
+    const outDir = mkdtempSync(join(tmpdir(), "contractguard-cli-"));
+    try {
+      const result = run(["generate", "-i", multiBaseline, "-o", outDir]);
+      expect(result.status).toBe(0);
+      const ts = readFileSync(join(outDir, "api.ts"), "utf8");
+      const interfaces = ts.match(/export interface /g) ?? [];
+      expect(interfaces.length).toBe(3);
+      expect(existsSync(join(outDir, "api.zod.ts"))).toBe(true);
+    } finally {
+      rmSync(outDir, { recursive: true, force: true });
+    }
+  });
+
   it("merges multi-sample directories without false-breaking optional fields", () => {
     const multiBaseline = join(root, "examples/fixtures/multi/baseline");
     const multiCandidate = join(root, "examples/fixtures/multi/candidate");
