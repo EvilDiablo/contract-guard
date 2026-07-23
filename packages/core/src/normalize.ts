@@ -1,5 +1,6 @@
 import type {
   ArraySchema,
+  FieldPresence,
   JsonValue,
   ObjectSchema,
   SchemaNode,
@@ -23,7 +24,7 @@ function schemaKindKey(node: SchemaNode): string {
   return node.kind;
 }
 
-function mergeSchemas(a: SchemaNode, b: SchemaNode): SchemaNode {
+export function mergeSchemas(a: SchemaNode, b: SchemaNode): SchemaNode {
   if (a.kind === "null") {
     return { ...b, nullable: true };
   }
@@ -143,6 +144,53 @@ export function normalizeValue(value: JsonValue): SchemaNode {
     return obj;
   }
   return { kind: "unknown" };
+}
+
+/**
+ * Infer SchemaIR from multiple JSON samples.
+ * Fields not present in every sample become optional; types are unioned.
+ */
+export function normalizeValues(samples: JsonValue[]): SchemaNode {
+  if (samples.length === 0) {
+    return { kind: "unknown" };
+  }
+  let schema = normalizeValue(samples[0]!);
+  for (let i = 1; i < samples.length; i++) {
+    schema = mergeSchemas(schema, normalizeValue(samples[i]!));
+  }
+  return schema;
+}
+
+/**
+ * Compute top-level and nested object key presence across samples.
+ * Paths use dotted notation (e.g. `user.email`).
+ */
+export function computeFieldPresence(samples: JsonValue[]): FieldPresence[] {
+  if (samples.length === 0) return [];
+  const counts = new Map<string, number>();
+
+  function walk(value: JsonValue, prefix: string): void {
+    if (!isPlainObject(value)) return;
+    for (const [key, child] of Object.entries(value)) {
+      const path = prefix ? `${prefix}.${key}` : key;
+      counts.set(path, (counts.get(path) ?? 0) + 1);
+      walk(child, path);
+    }
+  }
+
+  for (const sample of samples) {
+    walk(sample, "");
+  }
+
+  const sampleCount = samples.length;
+  return [...counts.entries()]
+    .map(([path, seenCount]) => ({
+      path,
+      seenCount,
+      sampleCount,
+      confidence: seenCount / sampleCount,
+    }))
+    .sort((a, b) => a.path.localeCompare(b.path));
 }
 
 /** Describe a schema node as a short human-readable type string. */

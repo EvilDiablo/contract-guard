@@ -8,6 +8,7 @@ export type {
   DiffOptions,
   DiffReport,
   DiffSeverity,
+  FieldPresence,
   JsonObject,
   JsonPrimitive,
   JsonValue,
@@ -19,9 +20,16 @@ export type {
 } from "./types.js";
 export { DEFAULT_IGNORE_PATHS } from "./types.js";
 
-export { normalizeValue, schemaToString, primaryType } from "./normalize.js";
+export {
+  normalizeValue,
+  normalizeValues,
+  mergeSchemas,
+  computeFieldPresence,
+  schemaToString,
+  primaryType,
+} from "./normalize.js";
 export { diffSchemas } from "./diff.js";
-export { compareJson } from "./compare.js";
+export { compareJson, compareJsonSamples } from "./compare.js";
 export type { CompareJsonOptions } from "./compare.js";
 export {
   formatMarkdownReport,
@@ -40,6 +48,8 @@ export {
 } from "./config.js";
 export { captureEndpoints } from "./capture.js";
 export type { CaptureOptions, CaptureResult } from "./capture.js";
+export { loadJsonSamples } from "./load-samples.js";
+export type { LoadedSamples } from "./load-samples.js";
 export {
   generateTypeScript,
   generateZod,

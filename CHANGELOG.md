@@ -2,6 +2,19 @@
 
 All notable changes to ContractGuard are documented in this file.
 
+## [0.2.0] — unreleased
+
+### Added
+
+- Multi-sample schema inference: `normalizeValues`, `compareJsonSamples`, and `loadJsonSamples`
+- CLI / Action `-b` / `-c` accept a JSON file or a directory of `*.json` samples (merged before diff)
+- Snapshot lifecycle docs (`docs/lifecycle.md`)
+- Report footnotes for baseline/candidate sample counts; Action outputs `baseline-samples` / `candidate-samples`
+
+### Changed
+
+- Removing an optional field (not required in the inferred baseline schema) is **info**, not breaking
+
 ## [0.1.1] — 2026-07-22
 
 ### Added

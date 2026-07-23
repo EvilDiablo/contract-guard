@@ -30,6 +30,17 @@ pnpm contractguard compare \
   --failOn never
 ```
 
+Multi-sample directories (fields not in every baseline sample are optional):
+
+```bash
+pnpm contractguard compare \
+  -b examples/fixtures/multi/baseline \
+  -c examples/fixtures/multi/candidate \
+  -f markdown
+```
+
+For the capture → baseline → CI → promote loop, see [Lifecycle](lifecycle.md).
+
 ## Generate types from a snapshot
 
 ```bash
@@ -51,6 +62,7 @@ See [MVP checklist](mvp-checklist.md).
 ## Next reading
 
 - [Install](install.md)
+- [Lifecycle](lifecycle.md)
 - [CLI reference](cli.md)
 - [How it works](how-it-works.md)
 - [GitHub Action](github-action.md)

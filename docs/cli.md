@@ -27,7 +27,7 @@ node packages/cli/dist/index.js <command> ...
 
 ### `compare`
 
-Semantically compare two JSON snapshot files.
+Semantically compare two JSON snapshots. Each of `-b` / `-c` may be a **single JSON file** or a **directory of `*.json` files** (sorted, merged into one schema before diffing).
 
 ```bash
 pnpm contractguard compare \
@@ -42,10 +42,21 @@ pnpm contractguard compare \
   --codegen types/
 ```
 
+Multi-sample directories:
+
+```bash
+pnpm contractguard compare \
+  -b examples/fixtures/multi/baseline \
+  -c examples/fixtures/multi/candidate \
+  -f markdown
+```
+
+Fields present in only some baseline samples are treated as optional. See [Lifecycle](lifecycle.md).
+
 | Flag | Description |
 | --- | --- |
-| `-b, --baseline` | Baseline JSON path (required) |
-| `-c, --candidate` | Candidate JSON path (required) |
+| `-b, --baseline` | Baseline JSON file or directory of `*.json` samples (required) |
+| `-c, --candidate` | Candidate JSON file or directory of `*.json` samples (required) |
 | `-C, --config` | Path to `contractguard.config.json` |
 | `-f, --format` | `text` (default), `markdown` / `md`, or `json` |
 | `-o, --out` | Write report to a file |

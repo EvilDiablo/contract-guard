@@ -188,17 +188,26 @@ function compareObjects(
     );
   }
 
+  const baselineRequired = new Set(baseline.required ?? []);
   for (const key of removed) {
     if (renamedFrom.has(key)) continue;
     const childPath = joinPath([...pathSegments, key]);
     if (shouldIgnorePath(childPath, options.ignorePaths)) continue;
+    const wasRequired = baselineRequired.has(key);
+    // Optional fields (e.g. present in only some multi-sample baselines) are not breaking when dropped.
     const severity =
-      options.side === "request" ? "info" : "breaking";
+      options.side === "request"
+        ? "info"
+        : wasRequired
+          ? "breaking"
+          : "info";
     findings.push({
       path: childPath,
       severity,
       changeType: "field_removed",
-      message: `Field \`${key}\` was removed`,
+      message: wasRequired
+        ? `Field \`${key}\` was removed`
+        : `Optional field \`${key}\` was removed`,
       baseline: schemaToString(baseline.properties[key]!),
     });
   }

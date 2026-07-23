@@ -90,10 +90,23 @@ export interface DiffReport {
     warning: number;
     info: number;
     total: number;
+    /** Number of JSON samples merged into the baseline schema. */
+    baselineSamples?: number;
+    /** Number of JSON samples merged into the candidate schema. */
+    candidateSamples?: number;
   };
   findings: DiffFinding[];
   baselineLabel?: string;
   candidateLabel?: string;
+}
+
+/** Presence rate for a dotted object path across samples (0–1). */
+export interface FieldPresence {
+  path: string;
+  seenCount: number;
+  sampleCount: number;
+  /** seenCount / sampleCount */
+  confidence: number;
 }
 
 export type Side = "response" | "request";

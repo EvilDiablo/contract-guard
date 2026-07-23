@@ -35,6 +35,16 @@ export function formatMarkdownReport(report: DiffReport, title = "ContractGuard 
     lines.push("");
   }
 
+  if (
+    (summary.baselineSamples !== undefined && summary.baselineSamples > 1) ||
+    (summary.candidateSamples !== undefined && summary.candidateSamples > 1)
+  ) {
+    lines.push(
+      `_Inferred from ${summary.baselineSamples ?? 1} baseline sample(s) and ${summary.candidateSamples ?? 1} candidate sample(s). Fields not present in every sample are treated as optional._`,
+    );
+    lines.push("");
+  }
+
   if (summary.total === 0) {
     lines.push("✅ No semantic API changes detected.");
     lines.push("");
@@ -80,8 +90,16 @@ export function formatTextReport(report: DiffReport): string {
   }
   const lines = [
     `Breaking: ${summary.breaking}  Warning: ${summary.warning}  Info: ${summary.info}`,
-    "",
   ];
+  if (
+    (summary.baselineSamples !== undefined && summary.baselineSamples > 1) ||
+    (summary.candidateSamples !== undefined && summary.candidateSamples > 1)
+  ) {
+    lines.push(
+      `Samples: baseline=${summary.baselineSamples ?? 1} candidate=${summary.candidateSamples ?? 1}`,
+    );
+  }
+  lines.push("");
   for (const f of findings) {
     lines.push(`[${f.severity}] ${f.path}: ${f.message}`);
   }

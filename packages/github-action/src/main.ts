@@ -3,19 +3,15 @@ import { resolve } from "node:path";
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 import {
-  compareJson,
+  compareJsonSamples,
   exitCodeForReport,
   formatMarkdownReport,
   loadConfigFromJson,
+  loadJsonSamples,
   type FailOn,
-  type JsonValue,
 } from "@contractguard/core";
 
 const MARKER = "<!-- contractguard-report -->";
-
-async function readJson(path: string): Promise<JsonValue> {
-  return JSON.parse(await readFile(path, "utf8")) as JsonValue;
-}
 
 async function upsertStickyComment(
   token: string,
@@ -83,15 +79,15 @@ async function run(): Promise<void> {
       configFailOn = config.failOn;
     }
 
-    const baseline = await readJson(resolve(baselinePath));
-    const candidate = await readJson(resolve(candidatePath));
+    const baselineLoaded = await loadJsonSamples(baselinePath);
+    const candidateLoaded = await loadJsonSamples(candidatePath);
 
-    const report = compareJson(baseline, candidate, {
+    const report = compareJsonSamples(baselineLoaded.samples, candidateLoaded.samples, {
       ignorePaths,
       additiveSeverity,
       side,
-      baselineLabel: baselinePath,
-      candidateLabel: candidatePath,
+      baselineLabel: baselineLoaded.label,
+      candidateLabel: candidateLoaded.label,
     });
 
     const markdown = formatMarkdownReport(report, normalizedTitle);
@@ -102,6 +98,8 @@ async function run(): Promise<void> {
     core.setOutput("breaking", String(report.summary.breaking));
     core.setOutput("warning", String(report.summary.warning));
     core.setOutput("report-path", reportPath);
+    core.setOutput("baseline-samples", String(report.summary.baselineSamples ?? 1));
+    core.setOutput("candidate-samples", String(report.summary.candidateSamples ?? 1));
 
     await core.summary
       .addRaw(markdown)

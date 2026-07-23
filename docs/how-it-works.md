@@ -3,14 +3,9 @@
 ContractGuard compares **structure**, not raw text. Key order and formatting never matter. Dynamic values (timestamps) are ignored by default.
 
 ```text
-JSON baseline ──┐
-                ├──► normalizeValue() ──► SchemaIR trees
-JSON candidate ─┘              │
-                               ▼
-                         diffSchemas()
-                               │
-                               ▼
-                    DiffReport (findings)
+baseline file or dir ──► normalizeValues() ──┐
+                                             ├──► diffSchemas() ──► DiffReport
+candidate file or dir ──► normalizeValues() ─┘
                                │
                ┌───────────────┼───────────────┐
                ▼               ▼               ▼
@@ -19,12 +14,14 @@ JSON candidate ─┘              │
 
 ## 1. Normalize → SchemaIR
 
-[`packages/core/src/normalize.ts`](../packages/core/src/normalize.ts) walks a concrete JSON value and produces a schema tree:
+[`packages/core/src/normalize.ts`](../packages/core/src/normalize.ts) walks concrete JSON and produces a schema tree:
 
 - primitives → `string` / `number` / `boolean` / `null`
 - objects → properties + required keys
 - arrays → union of element schemas
 - nullability tracked on nodes
+
+Use `normalizeValue` for one sample, or `normalizeValues` / `compareJsonSamples` for many. Keys not present in every sample leave `required` and are treated as optional when removed on the candidate.
 
 Concrete values like `19.99` vs `"19.99"` become different kinds (`number` vs `string`).
 
@@ -35,7 +32,8 @@ Concrete values like `19.99` vs `"19.99"` become different kinds (`number` vs `s
 | Change | Typical severity (response side) |
 | --- | --- |
 | Type change | **breaking** |
-| Field removed | **breaking** |
+| Required field removed | **breaking** |
+| Optional field removed | **info** |
 | Object → `null` | **breaking** |
 | Possible rename (`user_id` → `userId`) | **breaking** (+ suggestion) |
 | Field added | **info** (configurable → warning) |
@@ -53,9 +51,15 @@ Rename detection uses token + Levenshtein similarity on sibling keys ([`packages
 High-level API used by CLI / Action / web:
 
 ```ts
-import { compareJson, formatMarkdownReport, exitCodeForReport } from "@contractguard/core";
+import {
+  compareJson,
+  compareJsonSamples,
+  formatMarkdownReport,
+  exitCodeForReport,
+} from "@contractguard/core";
 
 const report = compareJson(baseline, candidate);
+// const report = compareJsonSamples(baselineSamples, candidateSamples);
 const md = formatMarkdownReport(report);
 const code = exitCodeForReport(report, "breaking"); // 0 | 1 | 2
 ```

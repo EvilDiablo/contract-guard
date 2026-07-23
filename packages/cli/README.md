@@ -64,15 +64,16 @@ npx contractguard generate -i snapshot.json -o types/ --name ApiResponse
 ## GitHub Action
 
 ```yaml
-- uses: EvilDiablo/contract-guard/packages/github-action@v0.1.0
+- uses: EvilDiablo/contract-guard/packages/github-action@v0.1.1
   with:
-    baseline: path/to/baseline.json
+    baseline: path/to/baseline.json   # or directory of *.json samples
     candidate: path/to/candidate.json
 ```
 
 ## Docs
 
 - [Install guide](https://github.com/EvilDiablo/contract-guard/blob/main/docs/install.md)
+- [Lifecycle](https://github.com/EvilDiablo/contract-guard/blob/main/docs/lifecycle.md)
 - [CLI reference](https://github.com/EvilDiablo/contract-guard/blob/main/docs/cli.md)
 - [Configuration](https://github.com/EvilDiablo/contract-guard/blob/main/docs/configuration.md)
 - [Repository](https://github.com/EvilDiablo/contract-guard)

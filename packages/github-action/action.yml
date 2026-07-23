@@ -6,10 +6,10 @@ branding:
   color: "orange"
 inputs:
   baseline:
-    description: "Path to baseline JSON snapshot"
+    description: "Path to baseline JSON file or directory of *.json samples"
     required: true
   candidate:
-    description: "Path to candidate JSON snapshot"
+    description: "Path to candidate JSON file or directory of *.json samples"
     required: true
   config:
     description: "Path to contractguard.config.json"
@@ -37,6 +37,10 @@ outputs:
     description: "Number of warning findings"
   report-path:
     description: "Path to written markdown report"
+  baseline-samples:
+    description: "Number of baseline JSON samples merged"
+  candidate-samples:
+    description: "Number of candidate JSON samples merged"
 runs:
   # GitHub Actions supports node20 | node24 (not node22) for JavaScript actions.
   using: "node24"

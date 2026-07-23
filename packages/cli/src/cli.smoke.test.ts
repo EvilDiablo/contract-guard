@@ -71,4 +71,24 @@ describe("cli smoke", () => {
       rmSync(outDir, { recursive: true, force: true });
     }
   });
+
+  it("merges multi-sample directories without false-breaking optional fields", () => {
+    const multiBaseline = join(root, "examples/fixtures/multi/baseline");
+    const multiCandidate = join(root, "examples/fixtures/multi/candidate");
+    const result = run([
+      "compare",
+      "-b",
+      multiBaseline,
+      "-c",
+      multiCandidate,
+      "-f",
+      "markdown",
+      "--failOn",
+      "breaking",
+    ]);
+    expect(result.stdout).toContain("3 samples");
+    expect(result.stdout).toMatch(/2 samples|Inferred from 3/);
+    // email was optional in baseline (missing from some samples) — not breaking
+    expect(result.status).toBe(0);
+  });
 });

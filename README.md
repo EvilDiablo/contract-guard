@@ -36,15 +36,15 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
-      - uses: EvilDiablo/contract-guard/packages/github-action@v0.1.0
+      - uses: EvilDiablo/contract-guard/packages/github-action@v0.1.1
         with:
-          baseline: path/to/baseline.json
+          baseline: path/to/baseline.json   # or a directory of *.json samples
           candidate: path/to/candidate.json
           title: "API contract changes"
           fail-on: breaking
 ```
 
-Details: [docs/github-action.md](docs/github-action.md).
+Details: [docs/github-action.md](docs/github-action.md). Snapshot workflow: [docs/lifecycle.md](docs/lifecycle.md).
 
 ## Try the demo fixtures (this repo)
 
@@ -59,6 +59,16 @@ pnpm contractguard compare \
 ```
 
 Expected breaking findings: `id` / `price` type changes, `user_id`→`userId` rename, `address`→`null`, `email` removed.
+
+Multi-sample directories (optional fields merged across samples):
+
+```bash
+pnpm contractguard compare \
+  -b examples/fixtures/multi/baseline \
+  -c examples/fixtures/multi/candidate \
+  -f markdown
+```
+
 
 ### Exit codes
 
@@ -83,6 +93,7 @@ Expected breaking findings: `id` / `price` type changes, `user_id`→`userId` re
 | --- | --- |
 | [Install](docs/install.md) | npm + Action for your team |
 | [Getting started](docs/getting-started.md) | First compare |
+| [Lifecycle](docs/lifecycle.md) | Capture → baseline → CI → promote |
 | [CLI](docs/cli.md) | Commands and flags |
 | [GitHub Action](docs/github-action.md) | Inputs and sticky comments |
 | [How it works](docs/how-it-works.md) | Semantic diff model |

@@ -5,13 +5,15 @@ import { consola } from "consola";
 import {
   CONFIG_FILENAMES,
   captureEndpoints,
-  compareJson,
+  compareJsonSamples,
   exitCodeForReport,
   formatMarkdownReport,
   formatTextReport,
   generateSchemas,
   loadConfigFromJson,
+  loadJsonSamples,
   normalizeValue,
+  normalizeValues,
   type ContractGuardConfig,
   type FailOn,
   type JsonValue,
@@ -54,13 +56,13 @@ const compare = defineCommand({
   args: {
     baseline: {
       type: "string",
-      description: "Path to baseline JSON file",
+      description: "Path to baseline JSON file or directory of *.json samples",
       required: true,
       alias: "b",
     },
     candidate: {
       type: "string",
-      description: "Path to candidate JSON file",
+      description: "Path to candidate JSON file or directory of *.json samples",
       required: true,
       alias: "c",
     },
@@ -104,15 +106,15 @@ const compare = defineCommand({
   },
   async run({ args }) {
     const config = await tryLoadConfig(args.config);
-    const baseline = await readJsonFile(resolve(args.baseline));
-    const candidate = await readJsonFile(resolve(args.candidate));
+    const baselineLoaded = await loadJsonSamples(args.baseline);
+    const candidateLoaded = await loadJsonSamples(args.candidate);
 
-    const report = compareJson(baseline, candidate, {
+    const report = compareJsonSamples(baselineLoaded.samples, candidateLoaded.samples, {
       ignorePaths: [...(config.ignorePaths ?? []), ...parseList(args.ignore)],
       side: (args.side as "response" | "request" | undefined) ?? config.side ?? "response",
       additiveSeverity: config.additiveSeverity ?? "info",
-      baselineLabel: args.baseline,
-      candidateLabel: args.candidate,
+      baselineLabel: baselineLoaded.label,
+      candidateLabel: candidateLoaded.label,
     });
 
     const format = (args.format ?? "text").toLowerCase();
@@ -135,7 +137,7 @@ const compare = defineCommand({
     }
 
     if (args.codegen) {
-      const schema = normalizeValue(candidate);
+      const schema = normalizeValues(candidateLoaded.samples);
       const { typescript, zod } = generateSchemas(schema, { typeName: "ApiResponse" });
       const dir = resolve(args.codegen);
       await mkdir(dir, { recursive: true });

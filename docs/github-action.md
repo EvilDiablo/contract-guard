@@ -9,14 +9,14 @@ The bundled runtime (`dist/main.js`) is **committed** so workflows can use the A
 ## Use from another repository
 
 ```yaml
-- uses: EvilDiablo/contract-guard/packages/github-action@v0.1.0
+- uses: EvilDiablo/contract-guard/packages/github-action@v0.1.1
   with:
-    baseline: contracts/baseline.json
+    baseline: contracts/baseline.json   # or directory of *.json samples
     candidate: contracts/candidate.json
     fail-on: breaking
 ```
 
-See [Install](install.md) for a full workflow. The `contract-guard` GitHub repo must be public (or your token must have access).
+See [Install](install.md) for a full workflow and [Lifecycle](lifecycle.md) for the snapshot loop. The `contract-guard` GitHub repo must be public (or your token must have access).
 
 ## Runtime
 
@@ -32,8 +32,8 @@ GitHub Actions JavaScript runtimes support `node20` and `node24` only (not `node
 
 | Input | Required | Default | Description |
 | --- | --- | --- | --- |
-| `baseline` | yes | — | Path to baseline JSON |
-| `candidate` | yes | — | Path to candidate JSON |
+| `baseline` | yes | — | Baseline JSON file or directory of `*.json` samples |
+| `candidate` | yes | — | Candidate JSON file or directory of `*.json` samples |
 | `config` | no | — | Path to `contractguard.config.json` |
 | `title` | no | `ContractGuard Report` | PR comment / report title |
 | `fail-on` | no | `breaking` | `breaking` \| `warning` \| `never` |
@@ -47,6 +47,8 @@ GitHub Actions JavaScript runtimes support `node20` and `node24` only (not `node
 | `breaking` | Breaking finding count |
 | `warning` | Warning finding count |
 | `report-path` | Path to written Markdown report |
+| `baseline-samples` | Number of baseline JSON samples merged |
+| `candidate-samples` | Number of candidate JSON samples merged |
 
 ## Dogfood in this repository
 
